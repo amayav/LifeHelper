@@ -198,7 +198,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
 
   data : Data[] = [ {start: "*", idol1: "*", idol2:"*", idol3:"*", idol4:"*", idol5:"*", perfect:"*", guard:"*" } ]
 
-  protected updateTimeLine(current_time: number, skills: Skill[], music_time: number = 120) : Data {
+  protected updateTimeLine(current_time: number, skills: Skill[], music_time: number, is_resonance: boolean) : Data {
     function is_activated(current_time: number, skill: Skill): boolean {
       /*
        * skill is activated after skill interval
@@ -266,24 +266,27 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
           this.last_activated_skill_id = i
         }
       }
-      /*
-          if (current_skill_name === PERFECT_SUPPORT_3) {
-            perfect_support_count += 3
-          } else if (current_skill_name === PERFECT_SUPPORT_2) {
-            perfect_support_count += 2
-          } else if (current_skill_name === PERFECT_SUPPORT_1) {
-            perfect_support_count += 1
-          } else if (current_skill_name === SKILL_BOOST) {
-            skill_boost_count += 1
-          } else if (current_skill_name === DAMAGE_GUARD) {
-            damage_guard_count += 1
-          }
-       */
     }
 
-    function is_perfect(): boolean {
-      return being_activated_skills_name.includes(PERFECT_SUPPORT_3) &&
-        being_activated_skills_name.includes(SKILL_BOOST)
+    function is_perfect(is_resonance: boolean): boolean {
+      if (is_resonance === false) {
+        return being_activated_skills_name.includes(PERFECT_SUPPORT_3) &&
+          being_activated_skills_name.includes(SKILL_BOOST)
+      }
+      const perfect_support_3_count: number =
+        (being_activated_skills_name.filter(name => name === PERFECT_SUPPORT_3)).length
+      const perfect_support_2_count: number =
+        (being_activated_skills_name.filter(name => name === PERFECT_SUPPORT_2)).length
+      const perfect_support_1_count: number =
+        (being_activated_skills_name.filter(name => name === PERFECT_SUPPORT_1)).length
+
+      let total_perfect_support_count: number =
+        perfect_support_3_count*3 + perfect_support_2_count*2 + perfect_support_1_count*1
+      if (total_perfect_support_count > 0) {
+        const skill_boost_count: number = (being_activated_skills_name.filter(name => name === SKILL_BOOST)).length
+        total_perfect_support_count += skill_boost_count
+      }
+      return (total_perfect_support_count >= 4)
     }
 
     function is_guard(): boolean {
@@ -317,12 +320,12 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       idol3: display(2, this.current_encore_id_list[2]),
       idol4: display(3, this.current_encore_id_list[3]),
       idol5: display(4, this.current_encore_id_list[4]),
-      perfect: is_perfect() ? "p" : "-",
+      perfect: is_perfect(is_resonance) ? "p" : "-",
       guard: is_guard() ? "g" : "-",
     }
   };
 
-  update (id: number, skill: Skill, music_time: number) {
+  private update (id: number, skill: Skill, music_time: number, is_resonance: boolean) {
     let new_skills : Skill[] = this.state.skills
     new_skills[id-1] = skill
     this.setState({skills: new_skills})
@@ -330,30 +333,31 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     this.last_activated_skill_id = -1
     this.current_encore_id_list = [-1, -1, -1, -1, -1]
     const timeList : number[] = [...Array(music_time*2)].map((_i, i) => i/2)
+
     this.data = timeList.map(startTime => {
-      return this.updateTimeLine(startTime, new_skills, music_time)
+      return this.updateTimeLine(startTime, new_skills, music_time, is_resonance)
     })
   }
 
-  changeName (id: number, name: string) {
+  private changeName (id: number, name: string) {
     let new_skill = {...this.state.skills[id-1], name: name}
-    this.update(id, new_skill, this.state.music_time)
+    this.update(id, new_skill, this.state.music_time, this.state.is_resonance)
   }
 
-  changeInterval (id: number, interval: number) {
+  private changeInterval (id: number, interval: number) {
     let new_skill: Skill = {...this.state.skills[id-1], interval: interval}
-    this.update(id, new_skill, this.state.music_time)
+    this.update(id, new_skill, this.state.music_time, this.state.is_resonance)
   }
 
-  changeTime (id: number, time: string) {
+  private changeTime (id: number, time: string) {
     let new_skill: Skill = {...this.state.skills[id-1], time: time}
-    this.update(id, new_skill, this.state.music_time)
+    this.update(id, new_skill, this.state.music_time, this.state.is_resonance)
   }
 
   private handleChangeMusicTime = (e: React.ChangeEvent<HTMLInputElement>) : any => {
     let new_music_time: number = Number(e.target.value)
     this.setState({music_time: new_music_time})
-    this.update(0, this.state.skills[0], new_music_time)
+    this.update(0, this.state.skills[0], new_music_time, this.state.is_resonance)
   }
 
   render() {
@@ -382,8 +386,60 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         idol4: <Idol skill={this.state.skills[3]} id={4} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
         idol5: <Idol skill={this.state.skills[4]} id={5} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
       }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const new_is_resonance: boolean = e.target.checked
+      this.setState({is_resonance: new_is_resonance})
+      this.update(0, this.state.skills[0], this.state.music_time, new_is_resonance)
+    };
+
+    const CenterList : string[] = [
+      "センター効果 レゾナンス・*** 有効？",
+    ]
+
+    const CheckBoxTemplate = ({ id, value, checked = false, onChange } : {id: string, value: string, checked: boolean, onChange: any}) => {
+      return (
+        <input
+        type="checkbox"
+        id={id}
+        name="center"
+        checked={checked}
+        onChange={onChange}
+        value={value}
+        />
+      )
+    }
+    const CheckBox = () => {
+      return (
+        <>
+        {CenterList.map((item, index) => {
+          index = index + 1
+          return (
+            <>
+            <label htmlFor="resonance">{item}</label>
+            <CheckBoxTemplate
+            id={`center_id_${index}`}
+            value={item}
+            onChange={handleChange}
+            checked={this.state.is_resonance}
+            />
+            </>
+          )
+        })}
+        </>
+      )
+    }
+
     return (
       <p>
+      {CenterList.map((item, index) => {
+        index = index + 1
+        return (
+          <>
+          <CheckBox />
+          </>
+        )
+      })}
       <IdolsTable columns={idolColumns} data={[this.idolsData]}/>
       楽曲時間（残り3秒未満になると特技が発動しない）
       <input
@@ -409,60 +465,6 @@ let skillTimes: { [key: string]: number } = {
 };
 
 function App() {
-  /*
-  interface Props {
-    checked?: boolean;
-  }
-  */
-
-  const [val, setVal] = React.useState([""]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (val.includes(e.target.value)) {
-      setVal(val.filter(item => item !== e.target.value));
-    } else {
-      setVal([...val, e.target.value]);
-    }
-  };
-
-  const CenterList : string[] = [
-    "レゾナンス",
-  ]
-
-  const CheckBoxTemplate = ({ id, value, checked = false, onChange } : {id: string, value: string, checked: boolean, onChange: any}) => {
-    return (
-      <input
-      type="checkbox"
-      id={id}
-      name="center"
-      checked={checked}
-      onChange={onChange}
-      value={value}
-      />
-    )
-  }
-
-  const CheckBox = () => {
-    return (
-      <>
-      {CenterList.map((item, index) => {
-        index = index + 1
-        return (
-          <>
-          <label htmlFor="resonance">{item}</label>
-          <CheckBoxTemplate
-          id={`id_${index}`}
-          value={item}
-          onChange={handleChange}
-          checked={val.includes(item)}
-          />
-          </>
-        )
-      })}
-      </>
-    )
-  }
-
   return (
     <>
     <div className="App">
@@ -487,15 +489,7 @@ function App() {
     {<p>シンデレラガールズ総選挙では小早川紗枝に投票してくれますよね</p>}
     {<p>チューニング は SR パーフェクトサポート と同じ</p>}
     {<p>トリコロール・シンフォニー は スキルブースト と同じ</p>}
-    {<p>未対応：レゾナンス, グランドライブ, 強制パーフェクト率計算, 強制パーフェクト時間計算, 強制パーフェクト + ダメージガード率計算, 強制パーフェクト + ダッメージガード時間計算</p>}
-    {CenterList.map((item, index) => {
-      index = index + 1
-      return (
-        <>
-        <CheckBox />
-        </>
-      )
-    })}
+    {<p>未対応：グランドライブ, 強制パーフェクト率計算, 強制パーフェクト時間計算, 強制パーフェクト + ダメージガード率計算, 強制パーフェクト + ダッメージガード時間計算</p>}
     <p>
   </p>
   {<Idols/>}

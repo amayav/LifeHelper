@@ -3,7 +3,7 @@
 import { unmountComponentAtNode } from "react-dom";
 import App from './App';
 import { Idols, Skill, Data } from './App';
-import {PERFECT_SUPPORT_3, SKILL_BOOST, DAMAGE_GUARD, ENCORE, CINDERELLA_MAGIC, OTHER} from './App';
+import {PERFECT_SUPPORT_3, PERFECT_SUPPORT_2, PERFECT_SUPPORT_1, SKILL_BOOST, DAMAGE_GUARD, ENCORE, CINDERELLA_MAGIC, OTHER} from './App';
 
 let container: any = null
 beforeEach(() => {
@@ -18,8 +18,8 @@ afterEach(() => {
 })
 
 class TestIdols extends Idols {
-  public testUpdateTimeLine(startTime: number, skills: Skill[], music_time: number = 120) {
-    return this.updateTimeLine(startTime, skills, music_time)
+  public testUpdateTimeLine(startTime: number, skills: Skill[], music_time: number = 120, is_resonance: boolean = false) {
+    return this.updateTimeLine(startTime, skills, music_time, is_resonance)
   }
   public setResonace(is_resonance: boolean): void {
     this.setState({is_resonance: is_resonance})
@@ -27,6 +27,8 @@ class TestIdols extends Idols {
 }
 
 const perfect_support_3_skill: Skill = {name: PERFECT_SUPPORT_3, interval: 8, time: "time_a"}
+const perfect_support_2_skill: Skill = {name: PERFECT_SUPPORT_2, interval: 8, time: "time_a"}
+const perfect_support_1_skill: Skill = {name: PERFECT_SUPPORT_1, interval: 8, time: "time_a"}
 const skill_boost_skill: Skill = {name: SKILL_BOOST, interval: 8, time: "time_a"}
 const encore_skill: Skill = {name: ENCORE, interval: 8, time: "time_a"}
 const damage_guard_skill: Skill = {name: DAMAGE_GUARD, interval: 8, time: "time_a"}
@@ -274,7 +276,7 @@ test('cinderella magic without encore', () => {
 
   let skills: Skill[] = [ damage_guard_skill, cinderella_magic_skill, other_skill, other_skill, other_skill, ]
   let data: Data = t.testUpdateTimeLine(6, skills)
-  let expectdata: Data = {
+  let expect_data: Data = {
     start: "6.0 -",
     idol1: "",
     idol2: "12345",
@@ -284,11 +286,11 @@ test('cinderella magic without encore', () => {
     perfect: "-",
     guard: "g"
   }
-  expect(data).toEqual(expectdata)
+  expect(data).toEqual(expect_data)
 
   skills = [ perfect_support_3_skill, cinderella_magic_skill, skill_boost_skill, other_skill, other_skill, ]
   data = t.testUpdateTimeLine(6, skills)
-  expectdata = {
+  expect_data = {
     start: "6.0 -",
     idol1: "",
     idol2: "12345",
@@ -298,7 +300,7 @@ test('cinderella magic without encore', () => {
     perfect: "p",
     guard: "-"
   }
-  expect(data).toEqual(expectdata)
+  expect(data).toEqual(expect_data)
 
 })
 
@@ -312,7 +314,7 @@ test('do encore cinderella magic', () => {
 
   let skills: Skill[] = [ cinderella_magic_skill, encore_skill, perfect_support_3_skill, skill_boost_skill, other_skill, ]
   let data: Data = t.testUpdateTimeLine(6.0, skills)
-  let expectdata: Data = {
+  let expect_data: Data = {
     start: "6.0 -",
     idol1: "12345",
     idol2: "",
@@ -322,10 +324,10 @@ test('do encore cinderella magic', () => {
     perfect: "p",
     guard: "-"
   }
-  expect(data).toEqual(expectdata)
+  expect(data).toEqual(expect_data)
 
   data = t.testUpdateTimeLine(10.5, skills)
-  expectdata = {
+  expect_data = {
     start: "10.5 -",
     idol1: "",
     idol2: "",
@@ -335,10 +337,10 @@ test('do encore cinderella magic', () => {
     perfect: "-",
     guard: "-"
   }
-  expect(data).toEqual(expectdata)
+  expect(data).toEqual(expect_data)
 
   data = t.testUpdateTimeLine(11.0, skills)
-  expectdata = {
+  expect_data = {
     start: "11.0 -",
     idol1: "",
     idol2: "12345",
@@ -348,7 +350,7 @@ test('do encore cinderella magic', () => {
     perfect: "p",
     guard: "-"
   }
-  expect(data).toEqual(expectdata)
+  expect(data).toEqual(expect_data)
 })
 
 test('skill isn\'t activated last 3 seconds of music', () => {
@@ -356,7 +358,7 @@ test('skill isn\'t activated last 3 seconds of music', () => {
   let skills: Skill[] = [ other_skill, other_skill, other_skill, other_skill, other_skill ]
   const music_time = 18.5
   let data: Data = t.testUpdateTimeLine(8.0, skills, music_time)
-  let expectdata: Data = {
+  let expect_data: Data = {
     start: "8.0 -",
     idol1: "1",
     idol2: "2",
@@ -366,14 +368,14 @@ test('skill isn\'t activated last 3 seconds of music', () => {
     perfect: "-",
     guard: "-"
   }
-  expect(data).toEqual(expectdata)
+  expect(data).toEqual(expect_data)
 
   data = t.testUpdateTimeLine(11.0, skills, music_time)
-  expectdata = {...expectdata, start: "11.0 -"}
-  expect(data).toEqual(expectdata)
+  expect_data = {...expect_data, start: "11.0 -"}
+  expect(data).toEqual(expect_data)
 
   data = t.testUpdateTimeLine(11.5, skills, music_time)
-  expectdata = {
+  expect_data = {
     start: "11.5 -",
     idol1: "",
     idol2: "",
@@ -383,21 +385,245 @@ test('skill isn\'t activated last 3 seconds of music', () => {
     perfect: "-",
     guard: "-"
   }
-  expect(data).toEqual(expectdata)
+  expect(data).toEqual(expect_data)
 
   data = t.testUpdateTimeLine(15.5, skills, music_time)
-  expectdata = {...expectdata, start: "15.5 -"}
-  expect(data).toEqual(expectdata)
+  expect_data = {...expect_data, start: "15.5 -"}
+  expect(data).toEqual(expect_data)
 
   data = t.testUpdateTimeLine(16.0, skills, music_time)
-  expectdata = {...expectdata, start: "16.0 -"}
-  expect(data).toEqual(expectdata)
+  expect_data = {...expect_data, start: "16.0 -"}
+  expect(data).toEqual(expect_data)
 
   data = t.testUpdateTimeLine(16.5, skills, music_time)
-  expectdata = {...expectdata, start: "16.5 -"}
-  expect(data).toEqual(expectdata)
+  expect_data = {...expect_data, start: "16.5 -"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 3 + 3', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_3_skill, perfect_support_3_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 3 + 2', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_3_skill, perfect_support_2_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 3 + 1', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_3_skill, perfect_support_1_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 3', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_3_skill, other_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect(data).toEqual(expect_data)
 })
 
 test('resonance perfect support 2 + 2', () => {
   const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_2_skill, perfect_support_2_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 2 + skill boost * 2', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_2_skill, skill_boost_skill, skill_boost_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 2 + 1', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_2_skill, perfect_support_1_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 2', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_2_skill, other_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 2 + 1 + skill boost', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_2_skill, perfect_support_1_skill, skill_boost_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 1 + 1 + skill boost * 2', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_1_skill, perfect_support_1_skill, skill_boost_skill, skill_boost_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 1 + skill boost * 3', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ perfect_support_1_skill, skill_boost_skill, skill_boost_skill, skill_boost_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 -",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
 })
