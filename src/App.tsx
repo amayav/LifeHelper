@@ -465,60 +465,6 @@ let skillTimes: { [key: string]: number } = {
 };
 
 function App() {
-  /*
-  interface Props {
-    checked?: boolean;
-  }
-  */
-
-  const [val, setVal] = React.useState([""]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (val.includes(e.target.value)) {
-      setVal(val.filter(item => item !== e.target.value));
-    } else {
-      setVal([...val, e.target.value]);
-    }
-  };
-
-  const CenterList : string[] = [
-    "レゾナンス",
-  ]
-
-  const CheckBoxTemplate = ({ id, value, checked = false, onChange } : {id: string, value: string, checked: boolean, onChange: any}) => {
-    return (
-      <input
-      type="checkbox"
-      id={id}
-      name="center"
-      checked={checked}
-      onChange={onChange}
-      value={value}
-      />
-    )
-  }
-
-  const CheckBox = () => {
-    return (
-      <>
-      {CenterList.map((item, index) => {
-        index = index + 1
-        return (
-          <>
-          <label htmlFor="resonance">{item}</label>
-          <CheckBoxTemplate
-          id={`id_${index}`}
-          value={item}
-          onChange={handleChange}
-          checked={val.includes(item)}
-          />
-          </>
-        )
-      })}
-      </>
-    )
-  }
-
   return (
     <>
     <div className="App">
