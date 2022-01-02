@@ -369,7 +369,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         { Header: "アイドル5特技", accessor: "idol5" },
       ]
     const columns : Column<Data>[] = [
-        { Header: "start", accessor: "start" },
+        { Header: "時刻（秒）", accessor: "start" },
         { Header: "4", accessor: "idol4" },
         { Header: "2", accessor: "idol2" },
         { Header: "1", accessor: "idol1" },
@@ -441,7 +441,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         )
       })}
       <IdolsTable columns={idolColumns} data={[this.idolsData]}/>
-      楽曲時間（残り3秒未満になると特技が発動しない）
+      楽曲時間（残り3秒未満になると特技が発動しない）：
       <input
       type="number"
       id="music_time"
@@ -449,6 +449,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       onChange={this.handleChangeMusicTime}
       value={this.state.music_time}
       />
+      秒
       {/*checked={checked}*/}
       <Table columns={columns} data={this.data}/>
       </p>
