@@ -22,6 +22,12 @@ export interface Data {
   guard: string;
 }
 
+export interface SimpleData {
+  start: string;
+  time: string;
+  mode: string;
+}
+
 function IdolsTable ({ columns, data } : { columns: Column<IdolsData>[], data: IdolsData[] } ) : any {
   const {
     getTableProps,
@@ -62,7 +68,47 @@ function IdolsTable ({ columns, data } : { columns: Column<IdolsData>[], data: I
   )
 }
 
-function Table ({ columns, data } : { columns: Column<Data>[], data: Data[] } ) : any {
+function TimeLineTable ({ columns, data } : { columns: Column<Data>[], data: Data[] } ) : any {
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow
+  } = useTable<Data>({ columns, data });
+
+  return(
+    <table {...getTableProps()}>
+    <thead>
+    {headerGroups.map(headerGroup => (
+      <tr {...headerGroup.getHeaderGroupProps()}>
+      {headerGroup.headers.map(column => (
+        <th {...column.getHeaderProps()}>
+        {column.render("Header")}</th>
+      ))}
+      </tr>
+    ))}
+    </thead>
+    <tbody {...getTableBodyProps()}>
+    {rows.map((row, i) => {
+      prepareRow(row);
+      return (
+        <tr {...row.getRowProps()}>
+        {row.cells.map(cell => {
+          return (
+            <td {...cell.getCellProps()}>
+            {cell.render("Cell")}</td>
+          )
+        })}
+        </tr>
+      );
+    })}
+    </tbody>
+    </table>
+  )
+}
+
+function SimpleTimeLineTable ({ columns, data } : { columns: Column<SimpleTimeLineTable>[], data: SimpleData[] } ) : any {
   const {
     getTableProps,
     getTableBodyProps,
@@ -198,6 +244,14 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
 
   data : Data[] = [ {start: "*", idol1: "*", idol2:"*", idol3:"*", idol4:"*", idol5:"*", perfect:"*", guard:"*" } ]
 
+  simple_timeline: SimpleData[] = []
+  simple_start_time: number = 0.0
+  simple_end_time: number = -1
+  simple_previous_mode: string = ""
+  protected getSimpleTimeLine(): SimpleData[] {
+    return this.simple_timeline
+  }
+
   protected updateTimeLine(current_time: number, skills: Skill[], music_time: number, is_resonance: boolean) : Data {
     function is_activated(current_time: number, skill: Skill): boolean {
       /*
@@ -220,10 +274,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     }
 
     let being_activated_skills_name: string[] = []
-    /*
-    let perfect_support_count = 0
-    let skill_boost_count = 0
-    */
 
     /* define skill encore uses */
     for (let i=4; i>=0; i--) {
@@ -313,6 +363,44 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       }
     }
 
+    const p: boolean = is_perfect(is_resonance)
+    const g: boolean = is_guard()
+    if (p === true) {
+      if ((simple_previous_mode === "") ||
+          (simple_previous_mode === "g")) {
+        /* change to perfect mode */
+        this.simple_end_time = current_time
+        this.simple_timeline.push({start: this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode})
+        this.simple_previous_mode = "p"
+        this.simple_start_time = current_time
+      } else {
+        /* continue perfect mode */
+      }
+    } else (g === true) {
+      if ((this.simple_previous_mode === "") ||
+          (this.simple_previous_mode === "p")) {
+        /* change to guard mode */
+        this.simple_end_time = current_time
+        this.simple_timeline.push({start: this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode})
+        this.simple_previous_mode = "g"
+        this.simple_start_time = current_time
+      } else {
+        /* continue guard mode */
+      }
+    } else {
+      if ((this.simple_previous_mode === "p") ||
+          (this.simple_previous_mode === "g")) {
+        /* change to miss mode */
+        this.simple_end_time = current_time
+        this.simple_timeline.push({start: this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode})
+        this.simple_previous_mode = ""
+        this.simple_start_time = current_time
+      } else {
+        /* continue miss mode */
+      }
+    }
+    /* process at the end of music time is out of this function */
+
     return {
       start: current_time.toFixed(1) + " - " + (current_time + 0.5).toFixed(1),
       idol1: display(0, this.current_encore_id_list[0]),
@@ -320,12 +408,12 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       idol3: display(2, this.current_encore_id_list[2]),
       idol4: display(3, this.current_encore_id_list[3]),
       idol5: display(4, this.current_encore_id_list[4]),
-      perfect: is_perfect(is_resonance) ? "p" : "-",
-      guard: is_guard() ? "g" : "-",
+      perfect: p ? "p" : "-",
+      guard: g ? "g" : "-",
     }
   };
 
-  private update (id: number, skill: Skill, music_time: number, is_resonance: boolean) {
+  private update (id: number, skill: Skill, music_time: number, is_resonance: boolean): void {
     let new_skills : Skill[] = this.state.skills
     new_skills[id-1] = skill
     this.setState({skills: new_skills})
@@ -337,6 +425,8 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     this.data = timeList.map(startTime => {
       return this.updateTimeLine(startTime, new_skills, music_time, is_resonance)
     })
+
+    this.simple_timeline.push({start: this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode})
   }
 
   private changeName (id: number, name: string) {
@@ -377,6 +467,11 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         { Header: "5", accessor: "idol5" },
         { Header: "PERFECT", accessor: "perfect" },
         { Header: "GUARD", accessor: "guard" },
+      ]
+    const simple_columns : Column<SimpleData>[] = [
+        { Header: "経過時間（秒）", accessor: "start" },
+        { Header: "継続時間（秒）", accessor: "time" },
+        { Header: "モード", accessor: "mode" },
       ]
     this.idolsData = 
       {
@@ -451,7 +546,8 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       />
       秒
       {/*checked={checked}*/}
-      <Table columns={columns} data={this.data}/>
+      <SimpleTimeLineTable columns={simple_columns} data={this.simple_timeline}/>
+      <TimeLineTable columns={columns} data={this.data}/>
       </p>
     )
   }

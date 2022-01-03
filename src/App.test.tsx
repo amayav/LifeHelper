@@ -2,7 +2,7 @@
 //import { render, screen, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from "react-dom";
 import App from './App';
-import { Idols, Skill, Data } from './App';
+import { Idols, Skill, Data, SimpleData } from './App';
 import {PERFECT_SUPPORT_3, PERFECT_SUPPORT_2, PERFECT_SUPPORT_1, SKILL_BOOST, DAMAGE_GUARD, ENCORE, CINDERELLA_MAGIC, OTHER} from './App';
 
 let container: any = null
@@ -627,3 +627,27 @@ test('resonance perfect support 1 + skill boost * 3', () => {
   expect_data = {...expect_data, perfect: "p"}
   expect(data).toEqual(expect_data)
 })
+
+test('simple timeline', () => {
+  const t = new TestIdols({} as any)
+  const damage_guard_skill: Skill = {name: DAMAGE_GUARD, interval: 12, time: "time_e"}
+  let skills: Skill[] = [ perfect_support_3_skill, skill_boost_skill, other_skill, other_skill, other_skill, ]
+
+  const timeList : number[] = [...Array(20*2)].map((_i, i) => i/2)
+
+  let data: Data[] = timeList.map(startTime => {
+      return t.updateTimeLine(startTime, skills)
+  }
+
+  const simple_timeline: SimpleData[] = t.getSimpleTimeLine()
+  const expect_timeline: SimpleData[] = [
+  {start: "0.0 - 8.0", time: "8.0", mode: ""},
+  {start: "8.0 - 11.5", time: "3.5", mode: "p"},
+  {start: "11.5 - 12.0", time: "0.5", mode: ""},
+  {start: "12.0 - 16.0", time: "4.0", mode: "g"},
+  {start: "16.0 - 19.5", time: "3.5", mode: "p"},
+  {start: "19.5 - 20.0", time: "0.5", mode: "g"}
+  ]
+
+  expect(simple_timeline).toEqual(expect_timeline)
+}
