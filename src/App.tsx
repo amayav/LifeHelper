@@ -314,7 +314,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     }
 
     return {
-      start: current_time.toFixed(1) + " -",
+      start: current_time.toFixed(1) + " - " + (current_time + 0.5).toFixed(1),
       idol1: display(0, this.current_encore_id_list[0]),
       idol2: display(1, this.current_encore_id_list[1]),
       idol3: display(2, this.current_encore_id_list[2]),
@@ -369,14 +369,14 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         { Header: "アイドル5特技", accessor: "idol5" },
       ]
     const columns : Column<Data>[] = [
-        { Header: "時刻（秒）", accessor: "start" },
+        { Header: "経過時間（秒）", accessor: "start" },
         { Header: "4", accessor: "idol4" },
         { Header: "2", accessor: "idol2" },
         { Header: "1", accessor: "idol1" },
         { Header: "3", accessor: "idol3" },
         { Header: "5", accessor: "idol5" },
-        { Header: "perfect", accessor: "perfect" },
-        { Header: "guard", accessor: "guard" },
+        { Header: "PERFECT", accessor: "perfect" },
+        { Header: "GUARD", accessor: "guard" },
       ]
     this.idolsData = 
       {
@@ -394,7 +394,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     };
 
     const CenterList : string[] = [
-      "センター効果 レゾナンス・*** 有効？",
+      "センター効果 レゾナンス・XXX 有効？",
     ]
 
     const CheckBoxTemplate = ({ id, value, checked = false, onChange } : {id: string, value: string, checked: boolean, onChange: any}) => {
@@ -469,30 +469,15 @@ function App() {
   return (
     <>
     <div className="App">
-    {
-    /*<header className="App-header">
-       {<img src={logo} className="App-logo" alt="logo" />}
-       <p>
-       Edit <code>src/App.tsx</code> and save to reload.
-       </p>
-       <a
-       className="App-link"
-       href="https://reactjs.org"
-       target="_blank"
-       rel="noopener noreferrer"
-       >
-       Learn React
-       </a>
-       </header>*/
-    }
-
-    {<p>アイドルマスタースターリットシーズン好評発売中！</p>}
-    {<p>シンデレラガールズ総選挙では小早川紗枝に投票してくれますよね</p>}
+    <div>
+    {<p>アイドルマスター スターリットシーズン好評発売中！</p>}
+    {<p>シンデレラガールズ総選挙で小早川紗枝に投票してくれますよね</p>}
+    </div>
+    <div>
     {<p>チューニング は SR パーフェクトサポート と同じ</p>}
     {<p>トリコロール・シンフォニー は スキルブースト と同じ</p>}
-    {<p>未対応：グランドライブ, 強制パーフェクト率計算, 強制パーフェクト時間計算, 強制パーフェクト + ダメージガード率計算, 強制パーフェクト + ダッメージガード時間計算</p>}
-    <p>
-  </p>
+    {<p>未対応：グランドライブ, 強制パーフェクト率・時間計算, 強制パーフェクト + ダメージガード率・時間計算</p>}
+    </div>
   {<Idols/>}
     </div>
     </>
