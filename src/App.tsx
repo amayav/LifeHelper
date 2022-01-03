@@ -108,14 +108,14 @@ function TimeLineTable ({ columns, data } : { columns: Column<Data>[], data: Dat
   )
 }
 
-function SimpleTimeLineTable ({ columns, data } : { columns: Column<SimpleTimeLineTable>[], data: SimpleData[] } ) : any {
+function SimpleTimeLineTable ({ columns, data } : { columns: Column<SimpleData>[], data: SimpleData[] } ) : any {
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow
-  } = useTable<Data>({ columns, data });
+  } = useTable<SimpleData>({ columns, data });
 
   return(
     <table {...getTableProps()}>
@@ -248,11 +248,11 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
   simple_start_time: number = 0.0
   simple_end_time: number = -1
   simple_previous_mode: string = ""
-  protected getSimpleTimeLine(): SimpleData[] {
+  private getSimpleTimeLine(): SimpleData[] {
     return this.simple_timeline
   }
 
-  protected updateTimeLine(current_time: number, skills: Skill[], music_time: number, is_resonance: boolean) : Data {
+  private updateTimeLine(current_time: number, skills: Skill[], music_time: number, is_resonance: boolean) : Data {
     function is_activated(current_time: number, skill: Skill): boolean {
       /*
        * skill is activated after skill interval
@@ -363,41 +363,38 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       }
     }
 
-    const p: boolean = is_perfect(is_resonance)
-    const g: boolean = is_guard()
+    const p: boolean = is_perfect(is_resonance);
+    const g: boolean = is_guard();
     if (p === true) {
-      if ((simple_previous_mode === "") ||
-          (simple_previous_mode === "g")) {
+      if ((this.simple_previous_mode === "") ||
+          (this.simple_previous_mode === "g")) {
         /* change to perfect mode */
-        this.simple_end_time = current_time
-        this.simple_timeline.push({start: this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode})
-        this.simple_previous_mode = "p"
-        this.simple_start_time = current_time
-      } else {
-        /* continue perfect mode */
+        this.simple_end_time = current_time;
+        this.simple_timeline.push({start: (this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1)), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode});
+        this.simple_previous_mode = "p";
+        this.simple_start_time = current_time;
       }
-    } else (g === true) {
+      /* else continue perfect mode */
+    } else if (g === true) {
       if ((this.simple_previous_mode === "") ||
           (this.simple_previous_mode === "p")) {
         /* change to guard mode */
-        this.simple_end_time = current_time
-        this.simple_timeline.push({start: this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode})
-        this.simple_previous_mode = "g"
-        this.simple_start_time = current_time
-      } else {
-        /* continue guard mode */
+        this.simple_end_time = current_time;
+        this.simple_timeline.push({start: (this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1)), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode});
+        this.simple_previous_mode = "g";
+        this.simple_start_time = current_time;
       }
+      /* else continue guard mode */
     } else {
       if ((this.simple_previous_mode === "p") ||
           (this.simple_previous_mode === "g")) {
         /* change to miss mode */
-        this.simple_end_time = current_time
-        this.simple_timeline.push({start: this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode})
-        this.simple_previous_mode = ""
-        this.simple_start_time = current_time
-      } else {
-        /* continue miss mode */
+        this.simple_end_time = current_time;
+        this.simple_timeline.push({start: (this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1)), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode});
+        this.simple_previous_mode = "";
+        this.simple_start_time = current_time;
       }
+      /* else continue miss mode */
     }
     /* process at the end of music time is out of this function */
 
