@@ -417,6 +417,12 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
 
     this.last_activated_skill_id = -1
     this.current_encore_id_list = [-1, -1, -1, -1, -1]
+
+    this.simple_timeline = []
+    this.simple_start_time = 0.0
+    this.simple_end_time = -1
+    this.simple_previous_mode = ""
+
     const timeList : number[] = [...Array(music_time*2)].map((_i, i) => i/2)
 
     this.data = timeList.map(startTime => {

@@ -654,6 +654,5 @@ test('simple timeline', () => {
   /* the last part is calculated in another place
   {start: "19.5 - 20.0", time: "0.5", mode: "g"}
   */
-
   expect(simple_timeline).toEqual(expect_timeline)
 })
