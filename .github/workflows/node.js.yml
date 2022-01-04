@@ -9,7 +9,7 @@ on:
   pull_request:
     branches: [ main ]
     types:
-      - opend
+      - opened
       - synchronize
       - reopend
 
