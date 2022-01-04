@@ -23,3 +23,11 @@ div {
 div p {
   margin: 0.1em
 }
+
+.tables {
+  display:flex;
+}
+
+.table {
+  display:flex;
+}

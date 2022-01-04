@@ -543,8 +543,14 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       />
       秒
       {/*checked={checked}*/}
+      <div className="tables">
+      <div className="table simple">
       <SimpleTimeLineTable columns={simple_columns} data={this.simple_timeline}/>
+      </div>
+      <div className="table detailed">
       <TimeLineTable columns={columns} data={this.data}/>
+      </div>
+      </div>
       </p>
     )
   }
