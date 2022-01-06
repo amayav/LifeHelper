@@ -28,94 +28,21 @@ export interface SimpleData {
   mode: string;
 }
 
-function IdolsTable ({ columns, data } : { columns: Column<IdolsData>[], data: IdolsData[] } ) : any {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow
-  } = useTable<IdolsData>({ columns, data });
-
-  return(
-    <table {...getTableProps()}>
-    <thead>
-    {headerGroups.map(headerGroup => (
-      <tr {...headerGroup.getHeaderGroupProps()}>
-      {headerGroup.headers.map(column => (
-        <th {...column.getHeaderProps()}>
-        {column.render("Header")}</th>
-      ))}
-      </tr>
-    ))}
-    </thead>
-    <tbody {...getTableBodyProps()}>
-    {rows.map((row, i) => {
-      prepareRow(row);
-      return (
-        <tr {...row.getRowProps()}>
-        {row.cells.map(cell => {
-          return (
-            <td {...cell.getCellProps()}>
-            {cell.render("Cell")}</td>
-          )
-        })}
-        </tr>
-      );
-    })}
-    </tbody>
-    </table>
-  )
+export interface TimeRatioData {
+  perfect_time: string;
+  perfect_ratio: string;
+  no_miss_time: string;
+  no_miss_ratio: string;
 }
 
-function TimeLineTable ({ columns, data } : { columns: Column<Data>[], data: Data[] } ) : any {
+function Table ({ columns, data } : { columns: Column<any>[], data: any[] } ) : any {
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow
-  } = useTable<Data>({ columns, data });
-
-  return(
-    <table {...getTableProps()}>
-    <thead>
-    {headerGroups.map(headerGroup => (
-      <tr {...headerGroup.getHeaderGroupProps()}>
-      {headerGroup.headers.map(column => (
-        <th {...column.getHeaderProps()}>
-        {column.render("Header")}</th>
-      ))}
-      </tr>
-    ))}
-    </thead>
-    <tbody {...getTableBodyProps()}>
-    {rows.map((row, i) => {
-      prepareRow(row);
-      return (
-        <tr {...row.getRowProps()}>
-        {row.cells.map(cell => {
-          return (
-            <td {...cell.getCellProps()}>
-            {cell.render("Cell")}</td>
-          )
-        })}
-        </tr>
-      );
-    })}
-    </tbody>
-    </table>
-  )
-}
-
-function SimpleTimeLineTable ({ columns, data } : { columns: Column<SimpleData>[], data: SimpleData[] } ) : any {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow
-  } = useTable<SimpleData>({ columns, data });
+  } = useTable<any>({ columns, data });
 
   return(
     <table {...getTableProps()}>
@@ -258,6 +185,25 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
   private getSimpleTimeLine(): SimpleData[] {
     return this.simple_timeline
   }
+
+  perfect_time: number = -1
+  private getPerfectTime(): number {
+    return this.perfect_time
+  }
+  perfect_ratio: number = -1
+  private getPerfectRatio(): number {
+    return this.perfect_ratio
+  }
+  no_miss_time: number = -1
+  private getNoMissTime(): number {
+    return this.no_miss_time
+  }
+  no_miss_ratio: number = -1
+  private getNoMissRatio(): number {
+    return this.no_miss_ratio
+  }
+  time_ratio: TimeRatioData[] = [{perfect_time: "*", perfect_ratio: "*", no_miss_time: "*", no_miss_ratio: "*"}]
+
   private is_activated(current_time: number, skill: Skill, music_time: number): boolean {
     /*
      * skill is activated after skill interval
@@ -363,9 +309,12 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     if (is_perfect === true) {
       /* change to perfect mode */
       this.change_simple_mode("p", current_time)
+      this.perfect_time += 0.5
+      this.no_miss_time += 0.5
     } else if (is_guard === true) {
       /* change to guard mode */
       this.change_simple_mode("g", current_time)
+      this.no_miss_time += 0.5
     } else {
       /* change to miss mode */
       this.change_simple_mode("", current_time)
@@ -422,6 +371,11 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     this.simple_start_time = 0.0
     this.simple_previous_mode = ""
 
+    this.perfect_time = 0
+    this.perfect_ratio = 0
+    this.no_miss_time = 0
+    this.no_miss_ratio = 0
+
     const timeList : number[] = [...Array(music_time*2)].map((_i, i) => i/2)
 
     this.data = timeList.map(startTime => {
@@ -433,6 +387,16 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       time: (music_time - this.simple_start_time).toFixed(1),
       mode: this.simple_previous_mode
     })
+
+    this.perfect_ratio = this.perfect_time / music_time * 100
+    this.no_miss_ratio = this.no_miss_time / music_time * 100
+
+    this.time_ratio = [{
+      perfect_time: this.perfect_time.toFixed(1),
+      perfect_ratio: this.perfect_ratio.toFixed(1),
+      no_miss_time: this.no_miss_time.toFixed(1),
+      no_miss_ratio: this.no_miss_ratio.toFixed(1)
+    }]
   }
 
   private changeName (id: number, name: string) {
@@ -482,8 +446,14 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       ]
     const simple_columns : Column<SimpleData>[] = [
         { Header: "経過時間（秒）", accessor: "start" },
+        { Header: "判定", accessor: "mode" },
         { Header: "継続時間（秒）", accessor: "time" },
-        { Header: "モード", accessor: "mode" },
+      ]
+    const time_ratio_columns : Column<TimeRatioData>[] = [
+        { Header: "PERFECT 時間（秒）", accessor: "perfect_time" },
+        { Header: "PERFECT 率（%）", accessor: "perfect_ratio" },
+        { Header: "NO MISS 時間（秒）", accessor: "no_miss_time" },
+        { Header: "NO MISS 率（%）", accessor: "no_miss_ratio" },
       ]
     this.idolsData = 
       {
@@ -547,7 +517,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
           </>
         )
       })}
-      <IdolsTable columns={idolColumns} data={[this.idolsData]}/>
+      <Table columns={idolColumns} data={[this.idolsData]}/>
       楽曲時間（残り3秒未満になると特技が発動しない）：
       <input
       type="number"
@@ -558,14 +528,21 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       />
       秒
       {/*checked={checked}*/}
-      <div className="tables">
+      {/*<div className="tables">*/}
+      <div>
+        <Table columns={time_ratio_columns} data={this.time_ratio}/>
+      </div>
       <div className="table simple">
-      <SimpleTimeLineTable columns={simple_columns} data={this.simple_timeline}/>
+        <label>簡易時系列
+          <Table columns={simple_columns} data={this.simple_timeline}/>
+        </label>
       </div>
       <div className="table detailed">
-      <TimeLineTable columns={columns} data={this.data}/>
+        <label>詳細時系列
+          <Table columns={columns} data={this.data}/>
+        </label>
       </div>
-      </div>
+      {/*</div>*/}
       </p>
     )
   }
@@ -577,12 +554,16 @@ function App() {
     <div className="App">
     <div>
     {<p>アイドルマスター スターリットシーズン好評発売中！</p>}
-    {<p>シンデレラガールズ総選挙で小早川紗枝に投票してくれますよね</p>}
+    {<p>使ったらシンデレラガールズ総選挙で小早川紗枝に投票しますよね</p>}
     </div>
     <div>
     {<p>チューニング は SR パーフェクトサポート と同じ</p>}
     {<p>トリコロール・シンフォニー は スキルブースト と同じ</p>}
-    {<p>未対応：グランドライブ, 強制パーフェクト率・時間計算, 強制パーフェクト + ダメージガード率・時間計算</p>}
+    {<p>未対応：グランドライブ</p>}
+    </div>
+    <div>
+    {<p>挙動がおかしいと思ったり要望があったりしたらソースコードを自分でいじってね</p>}
+    {<p>ソースコードのライセンスは設けてないよ</p>}
     </div>
   {<Idols/>}
     </div>
