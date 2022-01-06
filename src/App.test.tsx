@@ -637,10 +637,12 @@ test('simple timeline', () => {
   const damage_guard_skill: Skill = {name: DAMAGE_GUARD, interval: 12, time: "time_e"}
   let skills: Skill[] = [ perfect_support_3_skill, skill_boost_skill, damage_guard_skill, other_skill, other_skill, ]
 
+  t.simple_timeline = []
+
   const timeList : number[] = [...Array(20*2)].map((_i, i) => i/2)
 
   let data: Data[] = timeList.map(startTime => {
-      return t.updateTimeLine(startTime, skills, 20, false)
+      return t.testUpdateTimeLine(startTime, skills, 20, false)
   })
 
   const simple_timeline: SimpleData[] = t.testGetSimpleTimeLine()

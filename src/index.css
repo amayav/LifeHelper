@@ -25,9 +25,9 @@ div p {
 }
 
 .tables {
-  display:flex;
 }
 
 .table {
-  display:flex;
+  display:inline-block;
+  vertical-align: top;
 }

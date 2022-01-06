@@ -170,6 +170,14 @@ export const ENCORE="encore"
 export const CINDERELLA_MAGIC="cinderella_magic"
 export const OTHER="other"
 
+let skillTimes: { [key: string]: number } = {
+  'time_a': 3.0,
+  'time_b': 4.5,
+  'time_c': 6.0,
+  'time_d': 7.5,
+  'time_e': 9.0,
+};
+
 class Idol extends React.Component<Props, {}> {
   constructor(props: Props) {
     super(props)
@@ -204,18 +212,18 @@ class Idol extends React.Component<Props, {}> {
       <option value={OTHER}>その他</option>
       </select>
 
-        <input type="number" id={`interval_id_${this.props.id}`} name={`interval_name_${this.props.id}`} min="1" placeholder="4" onChange={this.handleInputBoxIntervalChange} value={this.props.skill.interval}/>
-        秒ごと
+      <input type="number" id={`interval_id_${this.props.id}`} name={`interval_name_${this.props.id}`} min="1" placeholder="4" onChange={this.handleInputBoxIntervalChange} value={this.props.skill.interval}/>
+      秒ごと
 
-          <select name={`time_name_${this.props.id}`} id={`time_id_${this.props.id}`} onChange={this.handleListBoxTimeChange} value={this.props.skill.time}>
-          <option value="time_a">一瞬の間</option>
-          <option value="time_b">わずかな間</option>
-          <option value="time_c">少しの間</option>
-          <option value="time_d">しばらくの間</option>
-          <option value="time_e">かなりの間</option>
-        </select>
+      <select name={`time_name_${this.props.id}`} id={`time_id_${this.props.id}`} onChange={this.handleListBoxTimeChange} value={this.props.skill.time}>
+      <option value="time_a">一瞬の間</option>
+      <option value="time_b">わずかな間</option>
+      <option value="time_c">少しの間</option>
+      <option value="time_d">しばらくの間</option>
+      <option value="time_e">かなりの間</option>
+      </select>
       </>
-    )
+      )
   }
 }
 
@@ -244,49 +252,61 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
 
   data : Data[] = [ {start: "*", idol1: "*", idol2:"*", idol3:"*", idol4:"*", idol5:"*", perfect:"*", guard:"*" } ]
 
-  simple_timeline: SimpleData[] = []
+  simple_timeline: SimpleData[] = [{start: "*", time: "*", mode: "*"} ]
   simple_start_time: number = 0.0
-  simple_end_time: number = -1
   simple_previous_mode: string = ""
   private getSimpleTimeLine(): SimpleData[] {
     return this.simple_timeline
   }
+  private is_activated(current_time: number, skill: Skill, music_time: number): boolean {
+    /*
+     * skill is activated after skill interval
+     * skill isn't activated the last 3 (not includes just 3) seconds of music (time when the last note is)
+     */
+    return (
+      (current_time >= skill.interval) &&
+      (((current_time - skill.interval) % skill.interval) <= skillTimes[skill.time]) &&
+      ((current_time - ((current_time - skill.interval) % skill.interval)) <= (music_time - 3))
+    )
+  }
+
+  private is_just_activated(current_time: number, skill: Skill, music_time: number): boolean {
+    return (
+      (current_time >= skill.interval) &&
+      (((current_time - skill.interval) % skill.interval) === 0) &&
+      (current_time <= (music_time - 3))
+    )
+  }
+
+  private change_simple_mode(new_mode: string, simple_end_time: number): void {
+    if (this.simple_previous_mode === new_mode) {
+      /* continue current mode */
+      return
+    }
+    this.simple_timeline.push({
+      start: (this.simple_start_time.toFixed(1) + " - " + simple_end_time.toFixed(1)),
+      time: (simple_end_time - this.simple_start_time).toFixed(1),
+      mode: this.simple_previous_mode
+    });
+    this.simple_previous_mode = new_mode
+    this.simple_start_time = simple_end_time;
+  }
 
   private updateTimeLine(current_time: number, skills: Skill[], music_time: number, is_resonance: boolean) : Data {
-    function is_activated(current_time: number, skill: Skill): boolean {
-      /*
-       * skill is activated after skill interval
-       * skill isn't activated the last 3 (not includes just 3) seconds of music (time when the last note is)
-       */
-      return (
-        (current_time >= skill.interval) &&
-        (((current_time - skill.interval) % skill.interval) <= skillTimes[skill.time]) &&
-        ((current_time - ((current_time - skill.interval) % skill.interval)) <= (music_time - 3))
-      )
-    }
-
-    function is_just_activated(current_time: number, skill: Skill): boolean {
-      return (
-        (current_time >= skill.interval) &&
-        (((current_time - skill.interval) % skill.interval) === 0) &&
-        (current_time <= (music_time - 3))
-      )
-    }
-
     let being_activated_skills_name: string[] = []
 
-    /* define skill encore uses */
+    /* define skill which encore uses */
     for (let i=4; i>=0; i--) {
       if ((skills[i].name === ENCORE) &&
-        (is_just_activated(current_time, skills[i])) &&
+        (this.is_just_activated(current_time, skills[i], music_time)) &&
         (this.last_activated_skill_id !== -1)) {
         this.current_encore_id_list[i] = this.last_activated_skill_id
       }
     }
 
-    /* listing up activated skills */
+    /* listing up activated skills and lastly activated skill*/
     for (let i=4; i>=0; i--) {
-      if (!is_activated(current_time, skills[i])) {
+      if (!this.is_activated(current_time, skills[i], music_time)) {
         continue
       }
       if (skills[i].name === ENCORE) {
@@ -309,20 +329,19 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         } else {
           being_activated_skills_name.push(skills[i].name)
         }
-
         /* calculate the last activated skill's id for the next 0.5 sec */
         /* encore does not copy the skills activated at the same time */
-        if (is_just_activated(current_time, skills[i])) {
+        if (this.is_just_activated(current_time, skills[i], music_time)) {
           this.last_activated_skill_id = i
         }
       }
     }
 
-    function is_perfect(is_resonance: boolean): boolean {
-      if (is_resonance === false) {
-        return being_activated_skills_name.includes(PERFECT_SUPPORT_3) &&
-          being_activated_skills_name.includes(SKILL_BOOST)
-      }
+    let is_perfect: boolean = false
+    if (is_resonance === false) {
+      is_perfect = being_activated_skills_name.includes(PERFECT_SUPPORT_3) &&
+        being_activated_skills_name.includes(SKILL_BOOST)
+    } else {
       const perfect_support_3_count: number =
         (being_activated_skills_name.filter(name => name === PERFECT_SUPPORT_3)).length
       const perfect_support_2_count: number =
@@ -336,121 +355,111 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         const skill_boost_count: number = (being_activated_skills_name.filter(name => name === SKILL_BOOST)).length
         total_perfect_support_count += skill_boost_count
       }
-      return (total_perfect_support_count >= 4)
+      is_perfect = (total_perfect_support_count >= 4)
     }
 
-    function is_guard(): boolean {
-      return being_activated_skills_name.includes(DAMAGE_GUARD)
-    }
+    const is_guard: boolean = being_activated_skills_name.includes(DAMAGE_GUARD)
 
-    function display(id: number, encore_id: number): string {
-      if (! is_activated(current_time, skills[id])) {
-        return ""
-      } else if (skills[id].name === ENCORE) {
-        if (encore_id !== -1) { // encore doesn't activate if no other skills have been activated
-          if (skills[encore_id].name === CINDERELLA_MAGIC) {
-            return "12345"
-          } else {
-            return (encore_id + 1).toFixed(0)
-          }
-        } else {
-          return ""
-        }
-      } else if (skills[id].name === CINDERELLA_MAGIC) {
-        return "12345"
-      } else {
-        return (id + 1).toFixed(0)
-      }
-    }
-
-    const p: boolean = is_perfect(is_resonance);
-    const g: boolean = is_guard();
-    if (p === true) {
-      if ((this.simple_previous_mode === "") ||
-          (this.simple_previous_mode === "g")) {
-        /* change to perfect mode */
-        this.simple_end_time = current_time;
-        this.simple_timeline.push({start: (this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1)), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode});
-        this.simple_previous_mode = "p";
-        this.simple_start_time = current_time;
-      }
-      /* else continue perfect mode */
-    } else if (g === true) {
-      if ((this.simple_previous_mode === "") ||
-          (this.simple_previous_mode === "p")) {
-        /* change to guard mode */
-        this.simple_end_time = current_time;
-        this.simple_timeline.push({start: (this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1)), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode});
-        this.simple_previous_mode = "g";
-        this.simple_start_time = current_time;
-      }
-      /* else continue guard mode */
+    if (is_perfect === true) {
+      /* change to perfect mode */
+      this.change_simple_mode("p", current_time)
+    } else if (is_guard === true) {
+      /* change to guard mode */
+      this.change_simple_mode("g", current_time)
     } else {
-      if ((this.simple_previous_mode === "p") ||
-          (this.simple_previous_mode === "g")) {
-        /* change to miss mode */
-        this.simple_end_time = current_time;
-        this.simple_timeline.push({start: (this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1)), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode});
-        this.simple_previous_mode = "";
-        this.simple_start_time = current_time;
-      }
-      /* else continue miss mode */
+      /* change to miss mode */
+      this.change_simple_mode("", current_time)
     }
     /* process at the end of music time is out of this function */
 
+    let display_strings: string[] = []
+    for (let id=0; id<5; id++) {
+      if (
+        (! this.is_activated(current_time, skills[id], music_time)) ||
+        (
+          // encore doesn't activate if no other skills have been activated
+          (skills[id].name === ENCORE) &&
+          (this.current_encore_id_list[id] === -1)
+        )
+      ) {
+        display_strings[id] = ""
+        continue
+      }
+      if (
+        (skills[id].name === CINDERELLA_MAGIC) ||
+        (
+          (skills[id].name === ENCORE) &&
+          (skills[this.current_encore_id_list[id]].name === CINDERELLA_MAGIC)
+        )
+      ) {
+        display_strings[id] = "12345"
+        continue
+      }
+      if (skills[id].name === ENCORE) {
+        display_strings[id] = (this.current_encore_id_list[id] + 1).toFixed(0)
+        continue
+      }
+      display_strings[id] = (id + 1).toFixed(0)
+    }
+
     return {
       start: current_time.toFixed(1) + " - " + (current_time + 0.5).toFixed(1),
-      idol1: display(0, this.current_encore_id_list[0]),
-      idol2: display(1, this.current_encore_id_list[1]),
-      idol3: display(2, this.current_encore_id_list[2]),
-      idol4: display(3, this.current_encore_id_list[3]),
-      idol5: display(4, this.current_encore_id_list[4]),
-      perfect: p ? "p" : "-",
-      guard: g ? "g" : "-",
+      idol1: display_strings[0],
+      idol2: display_strings[1],
+      idol3: display_strings[2],
+      idol4: display_strings[3],
+      idol5: display_strings[4],
+      perfect: is_perfect ? "p" : "-",
+      guard: is_guard ? "g" : "-",
     }
   };
 
-  private update (id: number, skill: Skill, music_time: number, is_resonance: boolean): void {
-    let new_skills : Skill[] = this.state.skills
-    new_skills[id-1] = skill
-    this.setState({skills: new_skills})
-
+  private update (skills: Skill[], music_time: number, is_resonance: boolean): void {
     this.last_activated_skill_id = -1
     this.current_encore_id_list = [-1, -1, -1, -1, -1]
 
     this.simple_timeline = []
     this.simple_start_time = 0.0
-    this.simple_end_time = -1
     this.simple_previous_mode = ""
 
     const timeList : number[] = [...Array(music_time*2)].map((_i, i) => i/2)
 
     this.data = timeList.map(startTime => {
-      return this.updateTimeLine(startTime, new_skills, music_time, is_resonance)
+      return this.updateTimeLine(startTime, skills, music_time, is_resonance)
     })
 
-    this.simple_timeline.push({start: this.simple_start_time.toFixed(1) + " - " + this.simple_end_time.toFixed(1), time: (this.simple_end_time - this.simple_start_time).toFixed(1), mode: this.simple_previous_mode})
+    this.simple_timeline.push({
+      start: this.simple_start_time.toFixed(1) + " - " + music_time.toFixed(1),
+      time: (music_time - this.simple_start_time).toFixed(1),
+      mode: this.simple_previous_mode
+    })
   }
 
   private changeName (id: number, name: string) {
-    let new_skill = {...this.state.skills[id-1], name: name}
-    this.update(id, new_skill, this.state.music_time, this.state.is_resonance)
+    let new_skills : Skill[] = this.state.skills
+    new_skills[id-1] = {...this.state.skills[id-1], name: name}
+    this.setState({skills: new_skills})
+    this.update(new_skills, this.state.music_time, this.state.is_resonance)
   }
 
-  private changeInterval (id: number, interval: number) {
-    let new_skill: Skill = {...this.state.skills[id-1], interval: interval}
-    this.update(id, new_skill, this.state.music_time, this.state.is_resonance)
+  private changeInterval (id: number, interval: number): void {
+    let new_skills : Skill[] = this.state.skills
+    new_skills[id-1] = {...this.state.skills[id-1], interval: interval}
+    this.setState({skills: new_skills})
+    this.update(new_skills, this.state.music_time, this.state.is_resonance)
   }
 
-  private changeTime (id: number, time: string) {
-    let new_skill: Skill = {...this.state.skills[id-1], time: time}
-    this.update(id, new_skill, this.state.music_time, this.state.is_resonance)
+  private changeTime (id: number, time: string): void {
+    let new_skills : Skill[] = this.state.skills
+    new_skills[id-1] = {...this.state.skills[id-1], time: time}
+    this.setState({skills: new_skills})
+    this.update(new_skills, this.state.music_time, this.state.is_resonance)
   }
 
-  private handleChangeMusicTime = (e: React.ChangeEvent<HTMLInputElement>) : any => {
+  private handleChangeMusicTime = (e: React.ChangeEvent<HTMLInputElement>) : void => {
     let new_music_time: number = Number(e.target.value)
     this.setState({music_time: new_music_time})
-    this.update(0, this.state.skills[0], new_music_time, this.state.is_resonance)
+    this.update(this.state.skills, new_music_time, this.state.is_resonance)
   }
 
   render() {
@@ -488,7 +497,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const new_is_resonance: boolean = e.target.checked
       this.setState({is_resonance: new_is_resonance})
-      this.update(0, this.state.skills[0], this.state.music_time, new_is_resonance)
+      this.update(this.state.skills, this.state.music_time, new_is_resonance)
     };
 
     const CenterList : string[] = [
@@ -561,14 +570,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     )
   }
 }
-
-let skillTimes: { [key: string]: number } = {
-  'time_a': 3.0,
-  'time_b': 4.5,
-  'time_c': 6.0,
-  'time_d': 7.5,
-  'time_e': 9.0,
-};
 
 function App() {
   return (
