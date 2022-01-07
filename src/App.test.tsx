@@ -21,12 +21,23 @@ class TestIdols extends Idols {
   public testUpdateTimeLine(startTime: number, skills: Skill[], music_time: number = 120, is_resonance: boolean = false) {
     return super.updateTimeLine(startTime, skills, music_time, is_resonance)
   }
-  public testGetSimpleTimeLine() {
+  public testUpdate(skills: Skill[], music_time: number = 120, is_resonance: boolean = false) {
+    return super.update(skills, music_time, is_resonance)
+  }
+  public testGetSimpleTimeLine(): SimpleData[] {
     return super.getSimpleTimeLine()
   }
-
-  public setResonace(is_resonance: boolean): void {
-    this.setState({is_resonance: is_resonance})
+  public testGetPerfectTime(): number {
+    return super.getPerfectTime()
+  }
+  public testGetPerfectRatio(): number {
+    return super.getPerfectRatio()
+  }
+  public testGetNoMissTime(): number {
+    return super.getNoMissTime()
+  }
+  public testGetNoMissRatio(): number {
+    return super.getNoMissRatio()
   }
 }
 
@@ -637,13 +648,7 @@ test('simple timeline', () => {
   const damage_guard_skill: Skill = {name: DAMAGE_GUARD, interval: 12, time: "time_e"}
   let skills: Skill[] = [ perfect_support_3_skill, skill_boost_skill, damage_guard_skill, other_skill, other_skill, ]
 
-  t.simple_timeline = []
-
-  const timeList : number[] = [...Array(20*2)].map((_i, i) => i/2)
-
-  let data: Data[] = timeList.map(startTime => {
-      return t.testUpdateTimeLine(startTime, skills, 20, false)
-  })
+  return t.testUpdate(skills, 20, false)
 
   const simple_timeline: SimpleData[] = t.testGetSimpleTimeLine()
   const expect_timeline: SimpleData[] = [
@@ -652,9 +657,32 @@ test('simple timeline', () => {
   {start: "11.5 - 12.0", time: "0.5", mode: ""},
   {start: "12.0 - 16.0", time: "4.0", mode: "g"},
   {start: "16.0 - 19.5", time: "3.5", mode: "p"},
-  ]
-  /* the last part is calculated in another place
   {start: "19.5 - 20.0", time: "0.5", mode: "g"}
-  */
+  ]
   expect(simple_timeline).toEqual(expect_timeline)
+})
+
+test('time/ratio', () => {
+  const t = new TestIdols({} as any)
+  const timeList : number[] = [...Array(20*2)].map((_i, i) => i/2)
+  const damage_guard_skill: Skill = {name: DAMAGE_GUARD, interval: 12, time: "time_e"}
+  let skills: Skill[] = [ perfect_support_3_skill, skill_boost_skill, damage_guard_skill, other_skill, other_skill, ]
+
+  return t.testUpdate(skills, 20, false)
+
+  const perfect_time = t.testGetPerfectTime()
+  const expect_perfect_time = 7.5
+  expect(perfect_time).toEqual(expect_perfect_time)
+
+  const perfect_ratio = t.testGetPerfectRatio()
+  const expect_perfect_ratio = 0.375
+  expect(perfect_ratio).toEqual(expect_perfect_ratio)
+
+  const no_miss_time = t.testGetNoMissTime()
+  const expect_no_miss_time = 11.0
+  expect(no_miss_time).toEqual(expect_no_miss_time)
+
+  const no_miss_ratio = t.testGetNoMissRatio()
+  const expect_no_miss_ratio = 0.55
+  expect(no_miss_ratio).toEqual(expect_no_miss_ratio)
 })
