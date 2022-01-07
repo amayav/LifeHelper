@@ -160,7 +160,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     const default_skill : Skill = {
       name: PERFECT_SUPPORT_3,
       interval: 8,
-      time: "time_b"
+      time: "time_d"
     }
     this.state = {
       skills: [default_skill, default_skill, default_skill, default_skill, default_skill],
@@ -527,8 +527,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       value={this.state.music_time}
       />
       秒
-      {/*checked={checked}*/}
-      {/*<div className="tables">*/}
       <div>
         <Table columns={time_ratio_columns} data={this.time_ratio}/>
       </div>
@@ -542,7 +540,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
           <Table columns={columns} data={this.data}/>
         </label>
       </div>
-      {/*</div>*/}
       </p>
     )
   }
@@ -551,23 +548,25 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
 function App() {
   return (
     <>
-    <div className="App">
-    <div>
-    {<p>アイドルマスター スターリットシーズン好評発売中！</p>}
-    {<p>使ったらシンデレラガールズ総選挙で小早川紗枝に投票しますよね</p>}
-    </div>
-    <div>
-    {<p>チューニング は SR パーフェクトサポート と同じ</p>}
-    {<p>トリコロール・シンフォニー は スキルブースト と同じ</p>}
-    {<p>未対応：グランドライブ</p>}
-    </div>
-    <div>
-    {<p>挙動がおかしいと思ったり要望があったりしたらソースコードを自分でいじってね</p>}
-    {<p>ソースコードのライセンスは設けてないよ</p>}
-    </div>
-  {<Idols/>}
-    </div>
-    </>
+      <div className="App">
+        <div>
+          <p>アイドルマスター スターリットシーズン好評発売中！</p>
+        </div>
+        <div>
+          <p>アイドルの自主性に任せるプロデュースを応援</p>
+          <p>チューニング は SR パーフェクトサポート と同じ</p>
+          <p>トリコロール・シンフォニー は スキルブースト と同じ</p>
+          <p>特技レベル10、特技発動率 100% 前提</p>
+          <p>未対応：グランドライブ</p>
+        </div>
+        <div>
+          <p>使ったらシンデレラガールズ総選挙で小早川紗枝に投票しますよね</p>
+          <p>挙動がおかしいと思ったり要望があったりしたら<a href="https://github.com/amayav/LifeHelper">ソースコード</a>を自分でいじってね</p>
+          <p>ソースコードのライセンスは設けてないよ</p>
+        </div>
+        <Idols/>
+      </div>
+  </>
   );
 }
 
