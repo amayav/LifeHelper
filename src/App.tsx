@@ -527,8 +527,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       value={this.state.music_time}
       />
       秒
-      {/*checked={checked}*/}
-      {/*<div className="tables">*/}
       <div>
         <Table columns={time_ratio_columns} data={this.time_ratio}/>
       </div>
@@ -542,7 +540,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
           <Table columns={columns} data={this.data}/>
         </label>
       </div>
-      {/*</div>*/}
       </p>
     )
   }
