@@ -211,7 +211,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
      */
     return (
       (current_time >= skill.interval) &&
-      (((current_time - skill.interval) % skill.interval) <= skillTimes[skill.time]) &&
+      (((current_time - skill.interval) % skill.interval + 0.5) <= skillTimes[skill.time]) &&
       ((current_time - ((current_time - skill.interval) % skill.interval)) <= (music_time - 3))
     )
   }

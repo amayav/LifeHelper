@@ -74,6 +74,320 @@ test('time 0', () => {
   expect(data).toEqual(expectData)
 })
 
+test('tiem_a', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+  ]
+  let data: Data = t.testUpdateTimeLine(7.5, skills)
+  let expectData: Data = {
+    start: "7.5 - 8.0",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(8.0, skills)
+  expectData = {
+    start: "8.0 - 8.5",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(10.5, skills)
+  expectData = {
+    start: "10.5 - 11.0",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(11.0, skills)
+  expectData = {
+    start: "11.0 - 11.5",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+})
+
+test('tiem_b', () => {
+  const other_skill: Skill = {name: OTHER, interval: 8, time: "time_b"}
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+  ]
+  let data: Data = t.testUpdateTimeLine(7.5, skills)
+  let expectData: Data = {
+    start: "7.5 - 8.0",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(8.0, skills)
+  expectData = {
+    start: "8.0 - 8.5",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(12.0, skills)
+  expectData = {
+    start: "12.0 - 12.5",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(12.5, skills)
+  expectData = {
+    start: "12.5 - 13.0",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+})
+
+test('tiem_c', () => {
+  const other_skill: Skill = {name: OTHER, interval: 8, time: "time_c"}
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+  ]
+  let data: Data = t.testUpdateTimeLine(7.5, skills)
+  let expectData: Data = {
+    start: "7.5 - 8.0",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(8.0, skills)
+  expectData = {
+    start: "8.0 - 8.5",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(13.5, skills)
+  expectData = {
+    start: "13.5 - 14.0",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(14.0, skills)
+  expectData = {
+    start: "14.0 - 14.5",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+})
+
+test('tiem_d', () => {
+  const other_skill: Skill = {name: OTHER, interval: 8, time: "time_d"}
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+  ]
+  let data: Data = t.testUpdateTimeLine(7.5, skills)
+  let expectData: Data = {
+    start: "7.5 - 8.0",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(8.0, skills)
+  expectData = {
+    start: "8.0 - 8.5",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(15.0, skills)
+  expectData = {
+    start: "15.0 - 15.5",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(15.5, skills)
+  expectData = {
+    start: "15.5 - 16.0",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+})
+
+test('tiem_e', () => {
+  const other_skill: Skill = {name: OTHER, interval: 10, time: "time_e"}
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+    other_skill,
+  ]
+  let data: Data = t.testUpdateTimeLine(9.5, skills)
+  let expectData: Data = {
+    start: "9.5 - 10.0",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(10.0, skills)
+  expectData = {
+    start: "10.0 - 10.5",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(18.5, skills)
+  expectData = {
+    start: "18.5 - 19.0",
+    idol1: "1",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateTimeLine(19.0, skills)
+  expectData = {
+    start: "19.0 - 19.5",
+    idol1: "",
+    idol2: "",
+    idol3: "",
+    idol4: "",
+    idol5: "",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expectData)
+})
+
 test('perfect_support_skill_boost', () => {
   const t = new TestIdols({} as any)
   let skills: Skill[] = [
@@ -154,62 +468,6 @@ test('guard enabling in each position', () => {
   expect(data).toEqual(expectNoGuardData)
 })
 
-test('guard enalbed and disabled in border time', () => {
-  const t = new TestIdols({} as any)
-  let skills: Skill[] = [ damage_guard_skill, other_skill, other_skill, other_skill, other_skill, ]
-  let data: Data = t.testUpdateTimeLine(7.5, skills)
-  const expectNoGuard75Data: Data = {
-    start: "7.5 - 8.0",
-    idol1: "",
-    idol2: "",
-    idol3: "",
-    idol4: "",
-    idol5: "",
-    perfect: "-",
-    guard: "-"
-  }
-  expect(data).toEqual(expectNoGuard75Data)
-
-  data = t.testUpdateTimeLine(8, skills)
-  const expectGuard80Data: Data = {
-    start: "8.0 - 8.5",
-    idol1: "1",
-    idol2: "2",
-    idol3: "3",
-    idol4: "4",
-    idol5: "5",
-    perfect: "-",
-    guard: "g"
-  }
-  expect(data).toEqual(expectGuard80Data)
-
-  data = t.testUpdateTimeLine(11, skills)
-  const expectGuard110Data: Data = {
-    start: "11.0 - 11.5",
-    idol1: "1",
-    idol2: "2",
-    idol3: "3",
-    idol4: "4",
-    idol5: "5",
-    perfect: "-",
-    guard: "g"
-  }
-  expect(data).toEqual(expectGuard110Data)
-
-  data = t.testUpdateTimeLine(11.5, skills)
-  const expectNoGuard115Data: Data = {
-    start: "11.5 - 12.0",
-    idol1: "",
-    idol2: "",
-    idol3: "",
-    idol4: "",
-    idol5: "",
-    perfect: "-",
-    guard: "-"
-  }
-  expect(data).toEqual(expectNoGuard115Data)
-})
-
 test('encore is not activated if no other skills have been activated', () => {
   const t = new TestIdols({} as any)
   const encore_skill: Skill = {name: ENCORE, interval: 7, time: "time_a"}
@@ -245,9 +503,9 @@ test('encore is activated if other skills have been activated', () => {
   }
   expect(data).toEqual(expectData)
 
-  data = t.testUpdateTimeLine(11.0, skills)
+  data = t.testUpdateTimeLine(10.5, skills)
   expectData = {
-    start: "11.0 - 11.5",
+    start: "10.5 - 11.0",
     idol1: "1",
     idol2: "",
     idol3: "",
@@ -258,9 +516,9 @@ test('encore is activated if other skills have been activated', () => {
   }
   expect(data).toEqual(expectData)
 
-  data = t.testUpdateTimeLine(11.5, skills)
+  data = t.testUpdateTimeLine(11.0, skills)
   expectData = {
-    start: "11.5 - 12.0",
+    start: "11.0 - 11.5",
     idol1: "",
     idol2: "",
     idol3: "",
@@ -385,13 +643,13 @@ test('skill isn\'t activated last 3 seconds of music', () => {
   }
   expect(data).toEqual(expect_data)
 
-  data = t.testUpdateTimeLine(11.0, skills, music_time)
-  expect_data = {...expect_data, start: "11.0 - 11.5"}
+  data = t.testUpdateTimeLine(10.5, skills, music_time)
+  expect_data = {...expect_data, start: "10.5 - 11.0"}
   expect(data).toEqual(expect_data)
 
-  data = t.testUpdateTimeLine(11.5, skills, music_time)
+  data = t.testUpdateTimeLine(11.0, skills, music_time)
   expect_data = {
-    start: "11.5 - 12.0",
+    start: "11.0 - 11.5",
     idol1: "",
     idol2: "",
     idol3: "",
