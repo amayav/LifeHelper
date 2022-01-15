@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/LifeHelper/static/css/main.fd73ded2.chunk.css",
-    "main.js": "/LifeHelper/static/js/main.4cd0d5d1.chunk.js",
-    "main.js.map": "/LifeHelper/static/js/main.4cd0d5d1.chunk.js.map",
+    "main.js": "/LifeHelper/static/js/main.555e8c82.chunk.js",
+    "main.js.map": "/LifeHelper/static/js/main.555e8c82.chunk.js.map",
     "runtime-main.js": "/LifeHelper/static/js/runtime-main.344ef866.js",
     "runtime-main.js.map": "/LifeHelper/static/js/runtime-main.344ef866.js.map",
     "static/js/2.b2a1a950.chunk.js": "/LifeHelper/static/js/2.b2a1a950.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.344ef866.js",
     "static/js/2.b2a1a950.chunk.js",
     "static/css/main.fd73ded2.chunk.css",
-    "static/js/main.4cd0d5d1.chunk.js"
+    "static/js/main.555e8c82.chunk.js"
   ]
 }
