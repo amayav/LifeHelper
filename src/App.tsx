@@ -11,6 +11,24 @@ export interface IdolsData {
   idol4: any;
   idol5: any;
 }
+
+export interface IdolsGrandData {
+  idolA1: any;
+  idolA2: any;
+  idolA3: any;
+  idolA4: any;
+  idolA5: any;
+  idolB1: any;
+  idolB2: any;
+  idolB3: any;
+  idolB4: any;
+  idolB5: any;
+  idolC1: any;
+  idolC2: any;
+  idolC3: any;
+  idolC4: any;
+  idolC5: any;
+}
 export interface Data {
   start: string;
   idol1: string;
@@ -172,6 +190,8 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     this.changeTime = this.changeTime.bind(this)
     this.handleChangeMusicTime = this.handleChangeMusicTime.bind(this)
   }
+  is_grand: boolean = false
+
   last_activated_skill_id: number = -1
   current_encore_id_list: number[] = [-1, -1, -1, -1, -1]
 
@@ -434,6 +454,23 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         { Header: "アイドル3特技", accessor: "idol3" },
         { Header: "アイドル5特技", accessor: "idol5" },
       ]
+    const idolGrandColumns : Column<IdolsGrandData>[] = [
+        { Header: "アイドルB4特技", accessor: "idolB4" },
+        { Header: "アイドルB2特技", accessor: "idolB2" },
+        { Header: "アイドルB1特技", accessor: "idolB1" },
+        { Header: "アイドルB3特技", accessor: "idolB3" },
+        { Header: "アイドルB5特技", accessor: "idolB5" },
+        { Header: "アイドルA4特技", accessor: "idolA4" },
+        { Header: "アイドルA2特技", accessor: "idolA2" },
+        { Header: "アイドルA1特技", accessor: "idolA1" },
+        { Header: "アイドルA3特技", accessor: "idolA3" },
+        { Header: "アイドルA5特技", accessor: "idolA5" },
+        { Header: "アイドルC4特技", accessor: "idolC4" },
+        { Header: "アイドルC2特技", accessor: "idolC2" },
+        { Header: "アイドルC1特技", accessor: "idolC1" },
+        { Header: "アイドルC3特技", accessor: "idolC3" },
+        { Header: "アイドルC5特技", accessor: "idolC5" },
+      ]
     const columns : Column<Data>[] = [
         { Header: "経過時間（秒）", accessor: "start" },
         { Header: "4", accessor: "idol4" },
@@ -507,42 +544,55 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       )
     }
 
+    function iid(idolsData: IdolsData) {
+      return <Table columns={idolColumns} data={[idolsData]}/>;
+    }
+
+    function iie(idolsData: IdolsData) {
+      return <Table columns={idolGrandColumns} data={[idolsData]}/>;
+    }
+
+    function ii(is_grand: boolean, idolsData: IdolsData) {
+      if (is_grand === false) {
+        return iid(idolsData)
+      } else {
+        return iie(idolsData)
+      }
+    }
+
+    function fff() {
+      return CenterList.map((item, index) => { index = index + 1; return ( <CheckBox /> ); });
+    }
+
     return (
       <p>
-      {CenterList.map((item, index) => {
-        index = index + 1
-        return (
-          <>
-          <CheckBox />
-          </>
-        )
-      })}
-      <Table columns={idolColumns} data={[this.idolsData]}/>
-      楽曲時間（残り3秒未満になると特技が発動しない）：
-      <input
+        {fff()}
+        ii(this.is_grand, this.idolsData);
+    楽曲時間（残り3秒未満になると特技が発動しない）：
+    <input
       type="number"
       id="music_time"
       name="music_time"
       onChange={this.handleChangeMusicTime}
       value={this.state.music_time}
-      />
-      秒
-      <div>
-        <Table columns={time_ratio_columns} data={this.time_ratio}/>
-      </div>
-      <div className="table simple">
-        <label>簡易時系列
-          <Table columns={simple_columns} data={this.simple_timeline}/>
-        </label>
-      </div>
-      <div className="table detailed">
-        <label>詳細時系列
-          <Table columns={columns} data={this.data}/>
-        </label>
-      </div>
-      </p>
-    )
-  }
+    />
+    秒
+    <div>
+      <Table columns={time_ratio_columns} data={this.time_ratio}/>
+    </div>
+    <div className="table simple">
+      <label>簡易時系列
+        <Table columns={simple_columns} data={this.simple_timeline}/>
+      </label>
+    </div>
+    <div className="table detailed">
+      <label>詳細時系列
+        <Table columns={columns} data={this.data}/>
+      </label>
+    </div>
+  </p>
+)
+}
 }
 
 function App() {
