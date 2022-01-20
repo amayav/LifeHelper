@@ -12,23 +12,6 @@ export interface IdolsData {
   idol5: any;
 }
 
-export interface IdolsGrandData {
-  idolA1: any;
-  idolA2: any;
-  idolA3: any;
-  idolA4: any;
-  idolA5: any;
-  idolB1: any;
-  idolB2: any;
-  idolB3: any;
-  idolB4: any;
-  idolB5: any;
-  idolC1: any;
-  idolC2: any;
-  idolC3: any;
-  idolC4: any;
-  idolC5: any;
-}
 export interface Data {
   start: string;
   idol1: string;
@@ -100,7 +83,8 @@ export type Skill = {
 }
 
 interface Props {
-  skill: Skill,
+  name: string,
+    skill: Skill,
     id: number,
     changeName: (id: number, time: string) => void
     changeInterval: (id: number, interval: number) => void
@@ -145,34 +129,41 @@ class Idol extends React.Component<Props, {}> {
 
   render() {
     return (
-      <>
-      <select name={`skill_name_${this.props.id}`} id={`skill_id_${this.props.id}`} onChange={this.handleListBoxNameChange} value={this.props.skill.name}>
-      <option value={PERFECT_SUPPORT_3}>SSR パーフェクトサポート</option>
-      <option value={PERFECT_SUPPORT_2}>SR パーフェクトサポート</option>
-      <option value={PERFECT_SUPPORT_1}>R パーフェクトサポート</option>
-      <option value={DAMAGE_GUARD}>ダメージガード</option>
-      <option value={SKILL_BOOST}>スキルブースト</option>
-      <option value={ENCORE}>アンコール</option>
-      <option value={CINDERELLA_MAGIC}>シンデレラマジック</option>
-      <option value={OTHER}>その他</option>
-      </select>
+      <div className="idol">
+        <label>{this.props.name}</label>
+        <div>
+          <select name={`skill_name_${this.props.id}`} id={`skill_id_${this.props.id}`} onChange={this.handleListBoxNameChange} value={this.props.skill.name}>
+            <option value={PERFECT_SUPPORT_3}>SSR パーフェクトサポート</option>
+            <option value={PERFECT_SUPPORT_2}>SR パーフェクトサポート</option>
+            <option value={PERFECT_SUPPORT_1}>R パーフェクトサポート</option>
+            <option value={DAMAGE_GUARD}>ダメージガード</option>
+            <option value={SKILL_BOOST}>スキルブースト</option>
+            <option value={ENCORE}>アンコール</option>
+            <option value={CINDERELLA_MAGIC}>シンデレラマジック</option>
+            <option value={OTHER}>その他</option>
+          </select>
+        </div>
 
-      <input type="number" id={`interval_id_${this.props.id}`} name={`interval_name_${this.props.id}`} min="1" placeholder="4" onChange={this.handleInputBoxIntervalChange} value={this.props.skill.interval}/>
-      秒ごと
+        <div>
+          <input type="number" id={`interval_id_${this.props.id}`} name={`interval_name_${this.props.id}`} min="1" placeholder="4" onChange={this.handleInputBoxIntervalChange} value={this.props.skill.interval}/>
+          秒ごと
+        </div>
 
-      <select name={`time_name_${this.props.id}`} id={`time_id_${this.props.id}`} onChange={this.handleListBoxTimeChange} value={this.props.skill.time}>
-      <option value="time_a">一瞬の間</option>
-      <option value="time_b">わずかな間</option>
-      <option value="time_c">少しの間</option>
-      <option value="time_d">しばらくの間</option>
-      <option value="time_e">かなりの間</option>
-      </select>
-      </>
-      )
+        <div>
+          <select name={`time_name_${this.props.id}`} id={`time_id_${this.props.id}`} onChange={this.handleListBoxTimeChange} value={this.props.skill.time}>
+            <option value="time_a">一瞬の間</option>
+            <option value="time_b">わずかな間</option>
+            <option value="time_c">少しの間</option>
+            <option value="time_d">しばらくの間</option>
+            <option value="time_e">かなりの間</option>
+          </select>
+        </div>
+      </div>
+    )
   }
 }
 
-export class Idols extends React.Component <{}, {skills: Skill[], music_time: number, is_resonance: boolean}> {
+export class Idols extends React.Component <{}, {skills: Skill[], music_time: number, is_resonance: boolean, is_grand: boolean}> {
   constructor(props: any) {
     super(props)
     const default_skill : Skill = {
@@ -184,18 +175,21 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       skills: [default_skill, default_skill, default_skill, default_skill, default_skill],
       music_time: 120,
       is_resonance: false,
+      is_grand: false
     }
     this.changeName = this.changeName.bind(this)
     this.changeInterval = this.changeInterval.bind(this)
     this.changeTime = this.changeTime.bind(this)
     this.handleChangeMusicTime = this.handleChangeMusicTime.bind(this)
   }
-  is_grand: boolean = false
 
   last_activated_skill_id: number = -1
   current_encore_id_list: number[] = [-1, -1, -1, -1, -1]
 
   idolsData : IdolsData = { idol1:null, idol2:null, idol3:null, idol4:null, idol5:null, }
+  idolsGrandBData : IdolsData = this.idolsData
+  idolsGrandAData : IdolsData = this.idolsData
+  idolsGrandCData : IdolsData = this.idolsData
 
   data : Data[] = [ {start: "*", idol1: "*", idol2:"*", idol3:"*", idol4:"*", idol5:"*", perfect:"*", guard:"*" } ]
 
@@ -447,30 +441,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
   }
 
   render() {
-    const idolColumns : Column<IdolsData>[] = [
-        { Header: "アイドル4特技", accessor: "idol4" },
-        { Header: "アイドル2特技", accessor: "idol2" },
-        { Header: "アイドル1特技", accessor: "idol1" },
-        { Header: "アイドル3特技", accessor: "idol3" },
-        { Header: "アイドル5特技", accessor: "idol5" },
-      ]
-    const idolGrandColumns : Column<IdolsGrandData>[] = [
-        { Header: "アイドルB4特技", accessor: "idolB4" },
-        { Header: "アイドルB2特技", accessor: "idolB2" },
-        { Header: "アイドルB1特技", accessor: "idolB1" },
-        { Header: "アイドルB3特技", accessor: "idolB3" },
-        { Header: "アイドルB5特技", accessor: "idolB5" },
-        { Header: "アイドルA4特技", accessor: "idolA4" },
-        { Header: "アイドルA2特技", accessor: "idolA2" },
-        { Header: "アイドルA1特技", accessor: "idolA1" },
-        { Header: "アイドルA3特技", accessor: "idolA3" },
-        { Header: "アイドルA5特技", accessor: "idolA5" },
-        { Header: "アイドルC4特技", accessor: "idolC4" },
-        { Header: "アイドルC2特技", accessor: "idolC2" },
-        { Header: "アイドルC1特技", accessor: "idolC1" },
-        { Header: "アイドルC3特技", accessor: "idolC3" },
-        { Header: "アイドルC5特技", accessor: "idolC5" },
-      ]
     const columns : Column<Data>[] = [
         { Header: "経過時間（秒）", accessor: "start" },
         { Header: "4", accessor: "idol4" },
@@ -494,12 +464,44 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       ]
     this.idolsData = 
       {
-        idol1: <Idol skill={this.state.skills[0]} id={1} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
-        idol2: <Idol skill={this.state.skills[1]} id={2} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
-        idol3: <Idol skill={this.state.skills[2]} id={3} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
-        idol4: <Idol skill={this.state.skills[3]} id={4} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
-        idol5: <Idol skill={this.state.skills[4]} id={5} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol1: <Idol name="アイドル1特技" skill={this.state.skills[0]} id={1} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol2: <Idol name="アイドル2特技" skill={this.state.skills[1]} id={2} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol3: <Idol name="アイドル3特技" skill={this.state.skills[2]} id={3} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol4: <Idol name="アイドル4特技" skill={this.state.skills[3]} id={4} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol5: <Idol name="アイドル5特技" skill={this.state.skills[4]} id={5} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
       }
+
+    this.idolsGrandBData = 
+      {
+        idol1: <Idol name="アイドル1特技" skill={this.state.skills[0]} id={1} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol2: <Idol name="アイドル2特技" skill={this.state.skills[1]} id={2} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol3: <Idol name="アイドル3特技" skill={this.state.skills[2]} id={3} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol4: <Idol name="アイドル4特技" skill={this.state.skills[3]} id={4} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol5: <Idol name="アイドル5特技" skill={this.state.skills[4]} id={5} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+      }
+
+    this.idolsGrandAData = 
+      {
+        idol1: <Idol name="アイドル1特技" skill={this.state.skills[0]} id={1} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol2: <Idol name="アイドル2特技" skill={this.state.skills[1]} id={2} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol3: <Idol name="アイドル3特技" skill={this.state.skills[2]} id={3} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol4: <Idol name="アイドル4特技" skill={this.state.skills[3]} id={4} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol5: <Idol name="アイドル5特技" skill={this.state.skills[4]} id={5} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+      }
+
+    this.idolsGrandCData = 
+      {
+        idol1: <Idol name="アイドル1特技" skill={this.state.skills[0]} id={1} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol2: <Idol name="アイドル2特技" skill={this.state.skills[1]} id={2} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol3: <Idol name="アイドル3特技" skill={this.state.skills[2]} id={3} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol4: <Idol name="アイドル4特技" skill={this.state.skills[3]} id={4} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+        idol5: <Idol name="アイドル5特技" skill={this.state.skills[4]} id={5} changeName={this.changeName} changeInterval={this.changeInterval} changeTime={this.changeTime}/>,
+      }
+
+    const handleChangeIsGrand = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const new_is_grand: boolean = e.target.checked
+      this.setState({is_grand: new_is_grand})
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const new_is_resonance: boolean = e.target.checked
@@ -511,63 +513,109 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       "センター効果 レゾナンス・XXX 有効？",
     ]
 
-    const CheckBoxTemplate = ({ id, value, checked = false, onChange } : {id: string, value: string, checked: boolean, onChange: any}) => {
-      return (
-        <input
-        type="checkbox"
-        id={id}
-        name="center"
-        checked={checked}
-        onChange={onChange}
-        value={value}
-        />
-      )
-    }
     const CheckBox = () => {
       return (
         <>
-        {CenterList.map((item, index) => {
-          index = index + 1
-          return (
-            <>
-            <label htmlFor="resonance">{item}</label>
-            <CheckBoxTemplate
-            id={`center_id_${index}`}
-            value={item}
+          <label htmlFor="resonance">センター効果 レゾナンス・XXX 有効？</label>
+          <input
+            type="checkbox"
+            id="center_id"
+            name="center"
             onChange={handleChange}
             checked={this.state.is_resonance}
-            />
-            </>
-          )
-        })}
-        </>
+            value="center"
+            key="center"
+          />
+      </>
       )
     }
 
-    function iid(idolsData: IdolsData) {
-      return <Table columns={idolColumns} data={[idolsData]}/>;
-    }
-
-    function iie(idolsData: IdolsData) {
-      return <Table columns={idolGrandColumns} data={[idolsData]}/>;
-    }
-
-    function ii(is_grand: boolean, idolsData: IdolsData) {
-      if (is_grand === false) {
-        return iid(idolsData)
+    function displayUnits(this: Idols) {
+      if (this.state.is_grand === false) {
+        return (
+          <div className="table">
+            <div>
+              <CheckBox />
+            </div>
+            <div className="idols">
+              {this.idolsData.idol4}
+              {this.idolsData.idol2}
+              {this.idolsData.idol1}
+              {this.idolsData.idol3}
+              {this.idolsData.idol5}
+            </div>
+          </div>
+      )
       } else {
-        return iie(idolsData)
+        return (
+            <div className="table">
+              <div>
+                <div>
+                  <label>ユニットB </label>
+                <div>
+                </div>
+                  <CheckBox />
+                </div>
+                <div className="idols">
+                  {this.idolsGrandBData.idol4}
+                  {this.idolsGrandBData.idol2}
+                  {this.idolsGrandBData.idol1}
+                  {this.idolsGrandBData.idol3}
+                  {this.idolsGrandBData.idol5}
+                </div>
+              </div>
+              <div>
+                <div>
+                  <label>ユニットA </label>
+                </div>
+                <div>
+                  <CheckBox />
+                </div>
+                <div className="idols">
+                  {this.idolsGrandAData.idol4}
+                  {this.idolsGrandAData.idol2}
+                  {this.idolsGrandAData.idol1}
+                  {this.idolsGrandAData.idol3}
+                  {this.idolsGrandAData.idol5}
+                </div>
+              </div>
+              <div>
+                <div>
+                  <label>ユニットC </label>
+                </div>
+                <div>
+                  <CheckBox />
+                </div>
+                <div className="idols">
+                  {this.idolsGrandCData.idol4}
+                  {this.idolsGrandCData.idol2}
+                  {this.idolsGrandCData.idol1}
+                  {this.idolsGrandCData.idol3}
+                  {this.idolsGrandCData.idol5}
+                </div>
+              </div>
+            </div>
+        )
       }
     }
 
-    function fff() {
-      return CenterList.map((item, index) => { index = index + 1; return ( <CheckBox /> ); });
-    }
-
     return (
-      <p>
-        {fff()}
-        ii(this.is_grand, this.idolsData);
+      <>
+        <div>
+        <label htmlFor="is_grand_live">グランドライブ</label>
+        <input
+          type="checkbox"
+          id="grand_live"
+          name="grand_live"
+          checked={this.state.is_grand}
+          onChange={handleChangeIsGrand}
+          value="grand_live"
+          key="g"
+        />
+      </div>
+        {/* this.state.is_grand = true */}
+    { displayUnits.call(this) }
+    <div>
     楽曲時間（残り3秒未満になると特技が発動しない）：
     <input
       type="number"
@@ -577,6 +625,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       value={this.state.music_time}
     />
     秒
+  </div>
     <div>
       <Table columns={time_ratio_columns} data={this.time_ratio}/>
     </div>
@@ -590,7 +639,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
         <Table columns={columns} data={this.data}/>
       </label>
     </div>
-  </p>
+  </>
 )
 }
 }
