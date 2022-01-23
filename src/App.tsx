@@ -159,8 +159,8 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     super(props)
     const default_skill : Skill = {
       name: PERFECT_SUPPORT_3,
-      interval: 8,
-      time: "time_d"
+      interval: 9,
+      time: "time_c"
     }
     this.state = {
       skills: [default_skill, default_skill, default_skill, default_skill, default_skill],
