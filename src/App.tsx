@@ -31,8 +31,8 @@ export interface SimpleData {
 export interface TimeRatioData {
   perfect_time: string;
   perfect_ratio: string;
-  no_miss_time: string;
-  no_miss_ratio: string;
+  no_damage_time: string;
+  no_damage_ratio: string;
 }
 
 function Table ({ columns, data } : { columns: Column<any>[], data: any[] } ) : any {
@@ -194,15 +194,15 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
   getPerfectRatio(): number {
     return this.perfect_ratio
   }
-  no_miss_time: number = -1
+  no_damage_time: number = -1
   getNoMissTime(): number {
-    return this.no_miss_time
+    return this.no_damage_time
   }
-  no_miss_ratio: number = -1
+  no_damage_ratio: number = -1
   getNoMissRatio(): number {
-    return this.no_miss_ratio
+    return this.no_damage_ratio
   }
-  time_ratio: TimeRatioData[] = [{perfect_time: "*", perfect_ratio: "*", no_miss_time: "*", no_miss_ratio: "*"}]
+  time_ratio: TimeRatioData[] = [{perfect_time: "*", perfect_ratio: "*", no_damage_time: "*", no_damage_ratio: "*"}]
 
   private is_activated(current_time: number, skill: Skill, music_time: number): boolean {
     /*
@@ -310,11 +310,11 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
       /* change to perfect mode */
       this.change_simple_mode("p", current_time)
       this.perfect_time += 0.5
-      this.no_miss_time += 0.5
+      this.no_damage_time += 0.5
     } else if (is_guard === true) {
       /* change to guard mode */
       this.change_simple_mode("g", current_time)
-      this.no_miss_time += 0.5
+      this.no_damage_time += 0.5
     } else {
       /* change to miss mode */
       this.change_simple_mode("", current_time)
@@ -373,8 +373,8 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
 
     this.perfect_time = 0
     this.perfect_ratio = 0
-    this.no_miss_time = 0
-    this.no_miss_ratio = 0
+    this.no_damage_time = 0
+    this.no_damage_ratio = 0
 
     const timeList : number[] = [...Array(music_time*2)].map((_i, i) => i/2)
 
@@ -389,13 +389,13 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     })
 
     this.perfect_ratio = this.perfect_time / music_time * 100
-    this.no_miss_ratio = this.no_miss_time / music_time * 100
+    this.no_damage_ratio = this.no_damage_time / music_time * 100
 
     this.time_ratio = [{
       perfect_time: this.perfect_time.toFixed(1),
       perfect_ratio: this.perfect_ratio.toFixed(1),
-      no_miss_time: this.no_miss_time.toFixed(1),
-      no_miss_ratio: this.no_miss_ratio.toFixed(1)
+      no_damage_time: this.no_damage_time.toFixed(1),
+      no_damage_ratio: this.no_damage_ratio.toFixed(1)
     }]
   }
 
@@ -452,8 +452,8 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     const time_ratio_columns : Column<TimeRatioData>[] = [
         { Header: "PERFECT 時間（秒）", accessor: "perfect_time" },
         { Header: "PERFECT 率（%）", accessor: "perfect_ratio" },
-        { Header: "NO MISS 時間（秒）", accessor: "no_miss_time" },
-        { Header: "NO MISS 率（%）", accessor: "no_miss_ratio" },
+        { Header: "ノーダメ 時間（秒）", accessor: "no_damage_time" },
+        { Header: "ノーダメ 率（%）", accessor: "no_damage_ratio" },
       ]
     this.idolsData = 
       {
