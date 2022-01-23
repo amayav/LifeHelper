@@ -550,11 +550,11 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
       /* change to perfect mode */
       this.change_simple_mode("p", current_time)
       this.perfect_time += 0.5
-      this.no_miss_time += 0.5
+      this.no_damage_time += 0.5
     } else if (is_guard === true) {
       /* change to guard mode */
       this.change_simple_mode("g", current_time)
-      this.no_miss_time += 0.5
+      this.no_damage_time += 0.5
     } else {
       /* change to miss mode */
       this.change_simple_mode("", current_time)
@@ -666,8 +666,8 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
 
     this.perfect_time = 0;
     this.perfect_ratio = 0;
-    this.no_miss_time = 0;
-    this.no_miss_ratio = 0;
+    this.no_damage_time = 0;
+    this.no_damage_ratio = 0;
 
     const timeList : number[] = [...Array(music_time*2)].map((_i, i) => i/2);
 
@@ -682,13 +682,13 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     })
 
     this.perfect_ratio = this.perfect_time / music_time * 100
-    this.no_miss_ratio = this.no_miss_time / music_time * 100
+    this.no_damage_ratio = this.no_damage_time / music_time * 100
 
     this.time_ratio = [{
       perfect_time: this.perfect_time.toFixed(1),
       perfect_ratio: this.perfect_ratio.toFixed(1),
-      no_miss_time: this.no_miss_time.toFixed(1),
-      no_miss_ratio: this.no_miss_ratio.toFixed(1)
+      no_damage_time: this.no_damage_time.toFixed(1),
+      no_damage_ratio: this.no_damage_ratio.toFixed(1)
     }]
   }
 
