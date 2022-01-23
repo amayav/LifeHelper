@@ -182,24 +182,24 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
   simple_timeline: SimpleData[] = [{start: "*", time: "*", mode: "*"} ]
   simple_start_time: number = 0.0
   simple_previous_mode: string = ""
-  private getSimpleTimeLine(): SimpleData[] {
+  getSimpleTimeLine(): SimpleData[] {
     return this.simple_timeline
   }
 
   perfect_time: number = -1
-  private getPerfectTime(): number {
+  getPerfectTime(): number {
     return this.perfect_time
   }
   perfect_ratio: number = -1
-  private getPerfectRatio(): number {
+  getPerfectRatio(): number {
     return this.perfect_ratio
   }
   no_miss_time: number = -1
-  private getNoMissTime(): number {
+  getNoMissTime(): number {
     return this.no_miss_time
   }
   no_miss_ratio: number = -1
-  private getNoMissRatio(): number {
+  getNoMissRatio(): number {
     return this.no_miss_ratio
   }
   time_ratio: TimeRatioData[] = [{perfect_time: "*", perfect_ratio: "*", no_miss_time: "*", no_miss_ratio: "*"}]
@@ -238,7 +238,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     this.simple_start_time = simple_end_time;
   }
 
-  private updateTimeLine(current_time: number, skills: Skill[], music_time: number, is_resonance: boolean) : Data {
+  updateTimeLine(current_time: number, skills: Skill[], music_time: number, is_resonance: boolean) : Data {
     let being_activated_skills_name: string[] = []
 
     /* define skill which encore uses */
@@ -363,7 +363,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], music_time: nu
     }
   };
 
-  private update (skills: Skill[], music_time: number, is_resonance: boolean): void {
+  update (skills: Skill[], music_time: number, is_resonance: boolean): void {
     this.last_activated_skill_id = -1
     this.current_encore_id_list = [-1, -1, -1, -1, -1]
 
