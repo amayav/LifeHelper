@@ -283,7 +283,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     return (
       (current_time >= skill.interval*(unit_number + 1)) &&
       (((current_time - skill.interval*(unit_number + 1)) % (skill.interval*3) + 0.5) <= skillTimes[skill.time]) &&
-      ((current_time - ((current_time - skill.interval*(unit_number +1)) % skill.interval)) <= (music_time - 3))
+      ((current_time - ((current_time - skill.interval*(unit_number + 1)) % skill.interval*3)) <= (music_time - 3))
     );
   }
 
@@ -293,24 +293,19 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
       (current_time >= skill.interval) &&
       (((current_time - skill.interval) % skill.interval) === 0) &&
       (current_time <= (music_time - 3))
-    )
+    );
     } else {
       /* TODO */
       return false;
     }
   }
 
-  private is_just_activated_grand(current_time: number, skill: Skill, music_time: number): boolean {
-    if (!this.state.is_grand) {
+  private is_just_activated_grand(current_time: number, skill: Skill, music_time: number, unit_number: number): boolean {
     return (
-      (current_time >= skill.interval) &&
-      (((current_time - skill.interval) % skill.interval) === 0) &&
+      (current_time >= skill.interval*(unit_number + 1)) &&
+      (((current_time - skill.interval*(unit_number + 1)) % skill.interval*3) === 0) &&
       (current_time <= (music_time - 3))
-    )
-    } else {
-      /* TODO */
-      return false;
-    }
+    );
   }
 
   private change_simple_mode(new_mode: string, simple_end_time: number): void {
@@ -458,9 +453,9 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     /* define skill which encore uses */
     for (let j=grand_skills.length - 1; j>=0; j--) {
       let skills: Skill[] = grand_skills[j];
-      for (let i=4; i>=0; i--) {
+      for (let i=skills.length - 1; i>=0; i--) {
         if ((skills[i].name === ENCORE) &&
-          (this.is_just_activated(current_time, skills[i], music_time)) &&
+          (this.is_just_activated_grand(current_time, skills[i], music_time, j)) &&
           (this.last_activated_skill_id !== -1)) {
           this.current_grand_encore_id_list[j][i] = this.last_activated_skill_id;
         }
@@ -470,7 +465,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     /* listing up activated skills and lastly activated skill*/
     for (let k=grand_skills.length - 1; k>=0; k--) {
       let skills: Skill[] = grand_skills[k];
-      for (let i=4; i>=0; i--) {
+      for (let i=skills.length - 1; i>=0; i--) {
         if (!this.is_activated_grand(current_time, skills[i], music_time, k)) {
           continue;
         }
@@ -479,16 +474,19 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           if (this.current_grand_encore_id_list[k][i] === -1) {
             continue;
           }
-          if ((skills[this.current_grand_encore_id_list[k][i]].name) === CINDERELLA_MAGIC) {
-            for (let j=4; j>=0; j--) {
-              being_activated_skills_name[k].push(skills[j].name);
+          let encored_skill_unit = Math.floor(this.current_grand_encore_id_list[k][i]/skills.length);
+          let encored_skill_number = this.current_grand_encore_id_list[k][i]%skills.length;
+          let encored_skill = grand_skills[encored_skill_unit][encored_skill_number];
+          if (encored_skill.name === CINDERELLA_MAGIC) {
+            for (let j=skills.length - 1; j>=0; j--) {
+              being_activated_skills_name[k].push(grand_skills[encored_skill_unit][j].name);
             }
           } else {
-            being_activated_skills_name[k].push(skills[this.current_grand_encore_id_list[k][i]].name);
+            being_activated_skills_name[k].push(encored_skill.name);
           }
         } else {
           if (skills[i].name === CINDERELLA_MAGIC) {
-            for (let j=4; j>=0; j--) {
+            for (let j=skills.length - 1; j>=0; j--) {
               being_activated_skills_name[k].push(skills[j].name);
             }
           } else {
@@ -496,8 +494,8 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           }
           /* calculate the last activated skill's id for the next 0.5 sec */
           /* encore does not copy the skills activated at the same time */
-          if (this.is_just_activated(current_time, skills[i], music_time)) {
-            this.last_activated_skill_id = i
+          if (this.is_just_activated_grand(current_time, skills[i], music_time, k)) {
+            this.last_activated_skill_id = k*skills.length + i;
           }
         }
       }
@@ -564,7 +562,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     let display_strings: string[][] = [[], [], []]
     for (let k=grand_skills.length - 1; k>=0; k--) {
       let skills: Skill[] = grand_skills[k];
-      for (let id=0; id<5; id++) {
+      for (let id=0; id<skills.length; id++) {
         if (
           (! this.is_activated_grand(current_time, skills[id], music_time, k)) ||
           (
@@ -573,24 +571,50 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
             (this.current_grand_encore_id_list[k][id] === -1)
           )
         ) {
-          display_strings[k][id] = ""
-          continue
+          display_strings[k][id] = "";
+          continue;
         }
-        if (
-          (skills[id].name === CINDERELLA_MAGIC) ||
-          (
-            (skills[id].name === ENCORE) &&
-            (skills[this.current_grand_encore_id_list[k][id]].name === CINDERELLA_MAGIC)
-          )
-        ) {
-          display_strings[k][id] = "12345"
-          continue
+        if (skills[id].name === CINDERELLA_MAGIC) {
+          if (k === 0) {
+            display_strings[k][id] = "A1A2A3A4A5";
+          } else if (k === 1) {
+            display_strings[k][id] = "B1B2B3B4B5";
+          } else {
+            display_strings[k][id] = "C1C2C3C4C5";
+          }
+          continue;
         }
         if (skills[id].name === ENCORE) {
-          display_strings[k][id] = (this.current_grand_encore_id_list[k][id] + 1).toFixed(0)
-          continue
+          let encored_skill_unit = Math.floor(this.current_grand_encore_id_list[k][id]/skills.length);
+          let encored_skill_number = this.current_grand_encore_id_list[k][id]%skills.length;
+          let encored_skill = grand_skills[encored_skill_unit][encored_skill_number];
+
+          if (encored_skill.name === CINDERELLA_MAGIC) {
+            if (encored_skill_unit === 0) {
+              display_strings[k][id] = "A1A2A3A4A5";
+            } else if (encored_skill_unit === 1) {
+              display_strings[k][id] = "B1B2B3B4B5";
+            } else {
+              display_strings[k][id] = "C1C2C3C4C5";
+            }
+            continue;
+          }
+          if (encored_skill_unit === 0) {
+            display_strings[k][id] = "A" + (encored_skill_number + 1).toFixed(0);
+          } else if (encored_skill_unit === 1) {
+            display_strings[k][id] = "B" + (encored_skill_number + 1).toFixed(0);
+          } else {
+            display_strings[k][id] = "C" + (encored_skill_number + 1).toFixed(0);
+          }
+          continue;
         }
-        display_strings[k][id] = (id + 1).toFixed(0)
+        if (k === 0) {
+          display_strings[k][id] = "A" + (id + 1).toFixed(0);
+        } else if (k === 1) {
+          display_strings[k][id] = "B" + (id + 1).toFixed(0);
+        } else {
+          display_strings[k][id] = "C" + (id + 1).toFixed(0);
+        }
       }
     }
 
