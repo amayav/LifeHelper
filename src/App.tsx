@@ -184,7 +184,7 @@ class Idol extends React.Component<Props, {}> {
   }
 }
 
-export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: Skill[][], music_time: number, is_resonance: boolean, is_grand: boolean}> {
+export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: Skill[][], music_time: number, is_resonance: boolean, is_resonance_grand: boolean[], is_grand: boolean}> {
   constructor(props: any) {
     super(props)
     const default_skill : Skill = {
@@ -201,6 +201,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
       ],
       music_time: 120,
       is_resonance: false,
+      is_resonance_grand: [false, false, false],
       is_grand: false
     }
     this.changeName = this.changeName.bind(this)
@@ -288,16 +289,11 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
   }
 
   private is_just_activated(current_time: number, skill: Skill, music_time: number): boolean {
-    if (!this.state.is_grand) {
     return (
       (current_time >= skill.interval) &&
       (((current_time - skill.interval) % skill.interval) === 0) &&
       (current_time <= (music_time - 3))
     );
-    } else {
-      /* TODO */
-      return false;
-    }
   }
 
   private is_just_activated_grand(current_time: number, skill: Skill, music_time: number, unit_number: number): boolean {
@@ -447,7 +443,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     }
   };
 
-  updateGrandTimeLine(current_time: number, grand_skills: Skill[][], music_time: number, is_resonance: boolean) : GrandData {
+  updateGrandTimeLine(current_time: number, grand_skills: Skill[][], music_time: number, is_resonance_grand: boolean[]) : GrandData {
     let being_activated_skills_name: string[][] = [[], [], []]
 
     /* define skill which encore uses */
@@ -502,40 +498,53 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     }
 
     let is_perfect: boolean = false
-    if (is_resonance === false) {
-      let p: boolean = false
-      for (let k=grand_skills.length - 1; k>=0; k--) {
-        if (being_activated_skills_name[k].includes(PERFECT_SUPPORT_3)) {
-          p = true;
+    for (let k=grand_skills.length - 1; k>=0; k--) {
+      if (is_resonance_grand[k] === false) {
+        let p: boolean = false
+        if (
+          (being_activated_skills_name[k].includes(PERFECT_SUPPORT_3)) &&
+          (being_activated_skills_name[k].includes(SKILL_BOOST))
+        ) {
+          is_perfect = true;
+          break;
+        }
+      } else {
+        /* TODO */
+        const perfect_support_3_count: number =
+          (being_activated_skills_name[k].filter(name => name === PERFECT_SUPPORT_3)).length;
+        const perfect_support_2_count: number =
+          (being_activated_skills_name[k].filter(name => name === PERFECT_SUPPORT_2)).length;
+        const perfect_support_1_count: number =
+          (being_activated_skills_name[k].filter(name => name === PERFECT_SUPPORT_1)).length;
+
+        let total_perfect_support_count: number =
+          perfect_support_3_count*3 + perfect_support_2_count*2 + perfect_support_1_count*1;
+        if (total_perfect_support_count > 0) {
+          let total_perfect_support_count_2: number = 0;
+          for (let l=0; l<being_activated_skills_name.length; l++) {
+            if ( l === k ) {
+              continue;
+            }
+            const perfect_support_3_count_2: number =
+              (being_activated_skills_name[l].filter(name => name === PERFECT_SUPPORT_3)).length;
+            const perfect_support_2_count_2: number =
+              (being_activated_skills_name[l].filter(name => name === PERFECT_SUPPORT_2)).length;
+            const perfect_support_1_count_2: number =
+              (being_activated_skills_name[l].filter(name => name === PERFECT_SUPPORT_1)).length;
+
+            total_perfect_support_count +=
+              perfect_support_3_count_2*3 + perfect_support_2_count_2*2 + perfect_support_1_count_2*1;
+          }
+          for (let l=0; l<being_activated_skills_name.length; l++) {
+            const skill_boost_count: number = (being_activated_skills_name[l].filter(name => name === SKILL_BOOST)).length;
+            total_perfect_support_count += skill_boost_count;
+          }
+        }
+        if (total_perfect_support_count >= 4) {
+          is_perfect = true;
           break;
         }
       }
-      if (p) {
-        for (let k=grand_skills.length - 1; k>=0; k--) {
-          if (being_activated_skills_name[k].includes(SKILL_BOOST)) {
-            is_perfect = true;
-            break;
-          }
-        }
-      }
-    } else {
-      /* TODO */
-      /*
-        const perfect_support_3_count: number =
-          (being_activated_skills_name.filter(name => name === PERFECT_SUPPORT_3)).length
-        const perfect_support_2_count: number =
-          (being_activated_skills_name.filter(name => name === PERFECT_SUPPORT_2)).length
-        const perfect_support_1_count: number =
-          (being_activated_skills_name.filter(name => name === PERFECT_SUPPORT_1)).length
-
-        let total_perfect_support_count: number =
-          perfect_support_3_count*3 + perfect_support_2_count*2 + perfect_support_1_count*1
-        if (total_perfect_support_count > 0) {
-          const skill_boost_count: number = (being_activated_skills_name.filter(name => name === SKILL_BOOST)).length
-          total_perfect_support_count += skill_boost_count
-        }
-        is_perfect = (total_perfect_support_count >= 4)
-       */
     }
     let is_guard: boolean = false;
     for (let k=grand_skills.length - 1; k>=0; k--) {
@@ -676,7 +685,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     }]
   }
 
-  grandUpdate (grand_skills: Skill[][], music_time: number, is_resonance: boolean): void {
+  grandUpdate (grand_skills: Skill[][], music_time: number, is_resonance_grand: boolean[]): void {
     this.last_activated_skill_id = -1;
     this.current_grand_encore_id_list = [
       [-1, -1, -1, -1, -1],
@@ -696,7 +705,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     const timeList : number[] = [...Array(music_time*2)].map((_i, i) => i/2);
 
     this.grand_data = timeList.map(startTime => {
-      return this.updateGrandTimeLine(startTime, grand_skills, music_time, is_resonance);
+      return this.updateGrandTimeLine(startTime, grand_skills, music_time, is_resonance_grand);
     })
 
     this.simple_timeline.push({
@@ -743,7 +752,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     new_skills[id - grand_number*5 -1] = {...this.state.grand_skills[grand_number][id - grand_number*5 - 1], name: name};
     new_grand_skills[grand_number] = new_skills;
     this.setState({grand_skills: new_grand_skills});
-    this.grandUpdate(new_grand_skills, this.state.music_time, this.state.is_resonance);
+    this.grandUpdate(new_grand_skills, this.state.music_time, this.state.is_resonance_grand);
   }
 
   private changeGrandInterval (id: number, grand_number: number, interval: number): void {
@@ -752,7 +761,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     new_skills[id - grand_number*5 - 1] = {...this.state.grand_skills[grand_number][id - grand_number*5 - 1], interval: interval};
     new_grand_skills[grand_number] = new_skills;
     this.setState({grand_skills: new_grand_skills});
-    this.grandUpdate(new_grand_skills, this.state.music_time, this.state.is_resonance);
+    this.grandUpdate(new_grand_skills, this.state.music_time, this.state.is_resonance_grand);
   }
 
   private changeGrandTime (id: number, grand_number: number, time: string): void {
@@ -761,7 +770,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     new_skills[id - grand_number*5 - 1] = {...this.state.grand_skills[grand_number][id - grand_number*5 - 1], time: time};
     new_grand_skills[grand_number] = new_skills;
     this.setState({grand_skills: new_grand_skills});
-    this.grandUpdate(new_grand_skills, this.state.music_time, this.state.is_resonance);
+    this.grandUpdate(new_grand_skills, this.state.music_time, this.state.is_resonance_grand);
   }
 
   private changeGrandBName (id: number, name: string): void {
