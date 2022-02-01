@@ -898,7 +898,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
       this.setState({is_grand: new_is_grand})
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleResonanceCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const new_is_resonance: boolean = e.target.checked
       this.setState({is_resonance: new_is_resonance})
       this.update(this.state.skills, this.state.music_time, new_is_resonance)
@@ -908,7 +908,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
       "センター効果 レゾナンス・XXX 有効？",
     ]
 
-    const CheckBox = () => {
+    const ResonanceCheckBox = () => {
       return (
         <>
           <label htmlFor="resonance">センター効果 レゾナンス・XXX 有効？</label>
@@ -916,10 +916,37 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
             type="checkbox"
             id="center_id"
             name="center"
-            onChange={handleChange}
+            onChange={handleResonanceCheckBoxChange}
             checked={this.state.is_resonance}
             value="center"
             key="center"
+          />
+      </>
+      )
+    }
+
+    const handleResonanceGrandCheckBoxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const unit_number: number = Number(e.currentTarget.getAttribute('data-unit_number'));
+      let new_is_resonance_grand: boolean[] = this.state.is_resonance_grand;
+      new_is_resonance_grand[unit_number] = e.target.checked;
+      console.log(new_is_resonance_grand);
+      this.setState({is_resonance_grand: new_is_resonance_grand});
+      this.grandUpdate(this.state.grand_skills, this.state.music_time, new_is_resonance_grand);
+    };
+
+    const ResonanceGrandCheckBox = (unit_number: number) => {
+      return (
+        <>
+          <label htmlFor="resonance">センター効果 レゾナンス・XXX 有効？</label>
+          <input
+            type="checkbox"
+            id={`center_id_${unit_number}`}
+            name={`center_${unit_number}`}
+            onChange={handleResonanceGrandCheckBoxChange}
+            checked={this.state.is_resonance_grand[unit_number]}
+            value="center"
+            key="center"
+            data-unit_number={`${unit_number}`}
           />
       </>
       )
@@ -930,7 +957,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
         return (
           <div className="table">
             <div>
-              <CheckBox />
+              <ResonanceCheckBox />
             </div>
             <div className="idols">
               {this.idolsData.idol4}
@@ -949,7 +976,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
                   <label>ユニットB </label>
                 <div>
                 </div>
-                  <CheckBox />
+                  {ResonanceGrandCheckBox(1)}
                 </div>
                 <div className="idols">
                   {this.idolsGrandBData.idol4}
@@ -964,7 +991,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
                   <label>ユニットA </label>
                 </div>
                 <div>
-                  <CheckBox />
+                  {ResonanceGrandCheckBox(0)}
                 </div>
                 <div className="idols">
                   {this.idolsGrandAData.idol4}
@@ -979,7 +1006,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
                   <label>ユニットC </label>
                 </div>
                 <div>
-                  <CheckBox />
+                  {ResonanceGrandCheckBox(2)}
                 </div>
                 <div className="idols">
                   {this.idolsGrandCData.idol4}
@@ -1008,7 +1035,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           key="g"
         />
       </div>
-        {/* this.state.is_grand = true */}
     { displayUnits.call(this) }
     <div>
     楽曲時間（残り3秒未満になると特技が発動しない）：

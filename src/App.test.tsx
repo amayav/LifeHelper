@@ -952,6 +952,48 @@ test('resonance perfect support 1 + skill boost * 3', () => {
   expect(data).toEqual(expect_data)
 })
 
+test('resonance perfect support 3 + cinderrela magic of perfect support 3', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ cinderella_magic_skill, perfect_support_3_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 - 8.5",
+    idol1: "12345",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
+test('resonance perfect support 2 + cinderrela magic of perfect support 2', () => {
+  const t = new TestIdols({} as any)
+  let skills: Skill[] = [ cinderella_magic_skill, perfect_support_2_skill, other_skill, other_skill, other_skill, ]
+  let data: Data = t.testUpdateTimeLine(8, skills, 120, false)
+  let expect_data: Data = {
+    start: "8.0 - 8.5",
+    idol1: "12345",
+    idol2: "2",
+    idol3: "3",
+    idol4: "4",
+    idol5: "5",
+    perfect: "-",
+    guard: "-"
+  }
+  expect(data).toEqual(expect_data)
+
+  data = t.testUpdateTimeLine(8, skills, 120, true)
+  expect_data = {...expect_data, perfect: "p"}
+  expect(data).toEqual(expect_data)
+})
+
 test('simple timeline', () => {
   const t = new TestIdols({} as any)
   const damage_guard_skill: Skill = {name: DAMAGE_GUARD, interval: 12, time: "time_e"}
@@ -1673,6 +1715,9 @@ test('resonance perfect support 3 + 3 in GRAND LIVE', () => {
   };
   expect(data).toEqual(expectData1)
 
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
   data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
   expectData1 = {...expectData1, perfect: "p"};
   expect(data).toEqual(expectData1)
@@ -1710,8 +1755,954 @@ test('resonance perfect support 3 + 3 with separeted unit in GRAND LIVE', () => 
   };
   expect(data).toEqual(expectData1)
 
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 3 + 2 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_3_skill, perfect_support_2_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 3 + 2 with separeted unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const perfect_support_2_skill_1: Skill = {name: PERFECT_SUPPORT_2, interval: 16, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [perfect_support_3_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [perfect_support_2_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(32.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "B1",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+})
+
+test('resonance perfect support 3 + 1 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_3_skill, perfect_support_1_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 3 + 1 with separeted unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const perfect_support_1_skill_1: Skill = {name: PERFECT_SUPPORT_1, interval: 16, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [perfect_support_3_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [perfect_support_1_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(32.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "B1",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 3 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_3_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, true, true]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 2 + 2 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, perfect_support_2_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 2 + 2 with separeted unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const perfect_support_2_skill_1: Skill = {name: PERFECT_SUPPORT_2, interval: 16, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [perfect_support_2_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(32.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "B1",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 2 + skill boost *2 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, skill_boost_skill, skill_boost_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 2 + skill boost *2 with separeted unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const skill_boost_skill: Skill = {name: SKILL_BOOST, interval: 16, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [skill_boost_skill, skill_boost_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(32.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "B1",
+    idolB2: "B2",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+
   data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
   expectData1 = {...expectData1, perfect: "p"};
   expect(data).toEqual(expectData1)
 })
 
+test('resonance perfect support 2 + 1 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, perfect_support_1_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 2 + 1 with separeted unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const perfect_support_1_skill_1: Skill = {name: PERFECT_SUPPORT_1, interval: 16, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [perfect_support_1_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(32.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "B1",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 2 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, true, true]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 2 + 1 + skill boost in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, perfect_support_1_skill, skill_boost_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 2 + 1 + skill boost with separeted unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const perfect_support_1_skill_1: Skill = {name: PERFECT_SUPPORT_1, interval: 16, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [perfect_support_2_skill, skill_boost_skill, other_skill, other_skill, other_skill, ],
+    [perfect_support_1_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(32.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "B1",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+
+  const skill_boost_skill_1: Skill = {name: SKILL_BOOST, interval: 10, time: "time_a"}
+  grand_skills = [
+    [perfect_support_2_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [perfect_support_1_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+    [skill_boost_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expectData1 = {...expectData1, idolC1: "C1", perfect: "-"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 1 + 1 + skill boost *2 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_1_skill, perfect_support_1_skill, skill_boost_skill, skill_boost_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 1 + 1 + skill boost *2 with separeted unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const perfect_support_1_skill_1: Skill = {name: PERFECT_SUPPORT_1, interval: 16, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [perfect_support_1_skill, skill_boost_skill, skill_boost_skill, other_skill, other_skill, ],
+    [perfect_support_1_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(32.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "B1",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+
+  const skill_boost_skill_1: Skill = {name: SKILL_BOOST, interval: 10, time: "time_a"}
+  grand_skills = [
+    [perfect_support_1_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [perfect_support_1_skill_1, other_skill, other_skill, other_skill, other_skill, ],
+    [skill_boost_skill_1, skill_boost_skill_1, other_skill, other_skill, other_skill, ],
+  ];
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expectData1 = {...expectData1, idolC1: "C1", idolC2: "C2", perfect: "-"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 1 + skill boost *3 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_1_skill, skill_boost_skill, skill_boost_skill, skill_boost_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [false, true, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(8.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 1 +  skill boost *3 with separeted unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  let grand_skills: Skill[][] = [
+    [perfect_support_1_skill, skill_boost_skill, skill_boost_skill, skill_boost_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(32.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "A2",
+    idolA3: "A3",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  const skill_boost_skill_1: Skill = {name: SKILL_BOOST, interval: 10, time: "time_a"}
+  grand_skills = [
+    [perfect_support_1_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [skill_boost_skill_1, skill_boost_skill_1, skill_boost_skill_1, other_skill, other_skill, ],
+  ];
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expectData1 = {...expectData1, idolC1: "C1", idolC2: "C2", idolC3: "C3", perfect: "-"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('encore perfect support 3 in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const encore_skill: Skill = {name: ENCORE, interval: 12, time: "time_a"};
+  const skill_boost_skill: Skill = {name: SKILL_BOOST, interval: 12, time: "time_a"};
+  let grand_skills: Skill[][] = [
+    [perfect_support_3_skill, encore_skill, skill_boost_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "",
+    idolA3: "",
+    idolA4: "A4",
+    idolA5: "A5",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(12.0, grand_skills, 120, [false, false, false]);
+  expectData1 = {...expectData1, start: "12.0 - 12.5", idolA1: "", idolA2: "A1", idolA3: "A3", idolA4: "", idolA5: "", perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('encore perfect support 3 with separated unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const encore_skill: Skill = {name: ENCORE, interval: 6, time: "time_a"};
+  const skill_boost_skill: Skill = {name: SKILL_BOOST, interval: 6, time: "time_a"};
+  const other_skill: Skill = {name: OTHER, interval: 100, time: "time_a"};
+  let grand_skills: Skill[][] = [
+    [perfect_support_3_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [encore_skill, skill_boost_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "",
+    idolA3: "",
+    idolA4: "",
+    idolA5: "",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(12.0, grand_skills, 120, [false, false, false]);
+  expectData1 = {...expectData1, start: "12.0 - 12.5", idolA1: "", idolB1: "A1", idolB2: "B2", perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('encore cinderella magic with perfect support 3 with separated unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const encore_skill: Skill = {name: ENCORE, interval: 6, time: "time_a"};
+  const skill_boost_skill: Skill = {name: SKILL_BOOST, interval: 6, time: "time_a"};
+  const other_skill: Skill = {name: OTHER, interval: 100, time: "time_a"};
+  let grand_skills: Skill[][] = [
+    [cinderella_magic_skill, perfect_support_3_skill, other_skill, other_skill, other_skill, ],
+    [encore_skill, skill_boost_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1A2A3A4A5",
+    idolA2: "A2",
+    idolA3: "",
+    idolA4: "",
+    idolA5: "",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(12.0, grand_skills, 120, [false, false, false]);
+  expectData1 = {...expectData1, start: "12.0 - 12.5", idolA1: "", idolA2: "", idolB1: "A1A2A3A4A5", idolB2: "B2", perfect: "p"};
+  expect(data).toEqual(expectData1)
+})
+
+test('resonance perfect support 3 + cinderella magic with perfect support 3 with separated unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const perfect_support_3_skill_1: Skill = {name: PERFECT_SUPPORT_3, interval: 100, time: "time_a"}
+  const perfect_support_3_skill_2: Skill = {name: PERFECT_SUPPORT_3, interval: 16, time: "time_a"}
+  const other_skill: Skill = {name: OTHER, interval: 100, time: "time_a"};
+  let grand_skills: Skill[][] = [
+    [cinderella_magic_skill, perfect_support_3_skill_1, other_skill, other_skill, other_skill, ],
+    [perfect_support_3_skill_2, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData1: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1A2A3A4A5",
+    idolA2: "",
+    idolA3: "",
+    idolA4: "",
+    idolA5: "",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, false, true]);
+  expectData1 = {...expectData1, start: "32.0 - 32.5", idolA1: "A1A2A3A4A5", idolB1: "B1"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [true, false, false]);
+  expectData1 = {...expectData1, perfect: "p"};
+  expect(data).toEqual(expectData1)
+
+  data = t.testUpdateGrandTimeLine(32.0, grand_skills, 120, [false, true, false]);
+  expectData1 = {...expectData1};
+  expect(data).toEqual(expectData1)
+})
