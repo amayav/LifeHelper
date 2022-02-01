@@ -500,7 +500,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     let is_perfect: boolean = false
     for (let k=grand_skills.length - 1; k>=0; k--) {
       if (is_resonance_grand[k] === false) {
-        let p: boolean = false
         if (
           (being_activated_skills_name[k].includes(PERFECT_SUPPORT_3)) &&
           (being_activated_skills_name[k].includes(SKILL_BOOST))
@@ -520,7 +519,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
         let total_perfect_support_count: number =
           perfect_support_3_count*3 + perfect_support_2_count*2 + perfect_support_1_count*1;
         if (total_perfect_support_count > 0) {
-          let total_perfect_support_count_2: number = 0;
           for (let l=0; l<being_activated_skills_name.length; l++) {
             if ( l === k ) {
               continue;
@@ -903,10 +901,6 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
       this.setState({is_resonance: new_is_resonance})
       this.update(this.state.skills, this.state.music_time, new_is_resonance)
     };
-
-    const CenterList : string[] = [
-      "センター効果 レゾナンス・XXX 有効？",
-    ]
 
     const ResonanceCheckBox = () => {
       return (
