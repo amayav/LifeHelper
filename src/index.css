@@ -24,6 +24,15 @@ div p {
   margin: 0.1em
 }
 
+.idols {
+  display:inline-flex;
+  vertical-align: top;
+}
+
+.idol {
+  margin: 0.1em
+}
+
 .table {
   display:inline-block;
   vertical-align: top;
