@@ -500,15 +500,19 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     let is_perfect: boolean = false
     for (let k=grand_skills.length - 1; k>=0; k--) {
       if (is_resonance_grand[k] === false) {
-        if (
-          (being_activated_skills_name[k].includes(PERFECT_SUPPORT_3)) &&
-          (being_activated_skills_name[k].includes(SKILL_BOOST))
-        ) {
-          is_perfect = true;
+        if (! being_activated_skills_name[k].includes(PERFECT_SUPPORT_3)) {
+          continue;
+        }
+        for (let j=grand_skills.length -1; j>=0; j--) {
+          if (being_activated_skills_name[j].includes(SKILL_BOOST)) {
+            is_perfect = true;
+            break;
+          }
+        }
+        if (is_perfect === true) {
           break;
         }
       } else {
-        /* TODO */
         const perfect_support_3_count: number =
           (being_activated_skills_name[k].filter(name => name === PERFECT_SUPPORT_3)).length;
         const perfect_support_2_count: number =

@@ -1291,6 +1291,71 @@ test('perfect support and skill boost in GRAND LIVE', () => {
   expect(data).toEqual(expectData1);
 })
 
+test('perfect support and skill boost with separated unit in GRAND LIVE', () => {
+  const t = new TestIdols({} as any);
+  const skill_boost_skill: Skill = {name: SKILL_BOOST, interval: 16, time: "time_a"};
+  const other_skill: Skill = {name: OTHER, interval: 100, time: "time_a"};
+  const skillsA: Skill[][] = [
+    [perfect_support_3_skill, skill_boost_skill, other_skill, other_skill, other_skill],
+    [skill_boost_skill, other_skill, other_skill, other_skill, other_skill],
+    [other_skill, other_skill, other_skill, other_skill, other_skill],
+  ];
+
+  let data: GrandData = t.testUpdateGrandTimeLine(31.5, skillsA);
+  let expectData1: GrandData = {
+    start: "31.5 - 32.0",
+    idolA1: "",
+    idolA2: "",
+    idolA3: "",
+    idolA4: "",
+    idolA5: "",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData1);
+
+  data = t.testUpdateGrandTimeLine(32.0, skillsA);
+  let expectData2: GrandData = {
+    start: "32.0 - 32.5",
+    idolA1: "A1",
+    idolA2: "",
+    idolA3: "",
+    idolA4: "",
+    idolA5: "",
+    idolB1: "B1",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "p",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData2);
+
+  data = t.testUpdateGrandTimeLine(34.5, skillsA);
+  expectData2 = {...expectData2, start: "34.5 - 35.0"};
+  expect(data).toEqual(expectData2);
+
+  data = t.testUpdateGrandTimeLine(35.0, skillsA);
+  expectData1 = {...expectData1, start: "35.0 - 35.5"};
+  expect(data).toEqual(expectData1);
+})
+
 test('encore in GRAND LIVE does not activate if any other skills have not activated', () => {
   const t = new TestIdols({} as any)
   const perfect_support_3_skill: Skill = {name: PERFECT_SUPPORT_3, interval: 8, time: "time_a"}
@@ -1376,6 +1441,54 @@ test('encore in GRAND LIVE', () => {
 
   data = t.testUpdateGrandTimeLine(70.0, grand_skills);
   expectData = {...expectData, start: "70.0 - 70.5", idolA1: "", idolA2: "C3", idolB2: "", idolC3: "C3"};
+  expect(data).toEqual(expectData)
+});
+
+test('encore perfect support + skill boost in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const perfect_support_3_skill: Skill = {name: PERFECT_SUPPORT_3, interval: 8, time: "time_a"}
+  const encore_skill: Skill = {name: ENCORE, interval: 9, time: "time_e"}
+  const skill_boost_skill: Skill = {name: SKILL_BOOST, interval: 9, time: "time_e"}
+  const other_skill: Skill = {name: OTHER, interval: 100, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [perfect_support_3_skill, encore_skill, skill_boost_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+    [other_skill, other_skill, other_skill, other_skill, other_skill, ],
+  ]
+
+  let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
+  let expectData: GrandData = {
+    start: "8.0 - 8.5",
+    idolA1: "A1",
+    idolA2: "",
+    idolA3: "",
+    idolA4: "",
+    idolA5: "",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateGrandTimeLine(9.0, grand_skills);
+  expectData = {...expectData, start: "9.0 - 9.5", idolA2: "A1", idolA3: "A3", perfect: "p"};
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateGrandTimeLine(10.5, grand_skills);
+  expectData = {...expectData, start: "10.5 - 11.0"};
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateGrandTimeLine(11.0, grand_skills);
+  expectData = {...expectData, start: "11.0 - 11.5", idolA1: ""};
   expect(data).toEqual(expectData)
 });
 
