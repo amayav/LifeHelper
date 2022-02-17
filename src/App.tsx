@@ -216,7 +216,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     this.changeGrandCName = this.changeGrandCName.bind(this)
     this.changeGrandCInterval = this.changeGrandCInterval.bind(this)
     this.changeGrandCTime = this.changeGrandCTime.bind(this)
-    this.handleChangeMusicTime = this.handleChangeMusicTime.bind(this)
+    this.handleChangeGrandMusicTime = this.handleChangeGrandMusicTime.bind(this)
   }
 
   last_activated_skill_id: number = -1
@@ -811,10 +811,10 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     this.changeGrandTime(id, 2, time);
   }
 
-  private handleChangeMusicTime = (e: React.ChangeEvent<HTMLInputElement>) : void => {
+  private handleChangeGrandMusicTime = (e: React.ChangeEvent<HTMLInputElement>) : void => {
     let new_music_time: number = Number(e.target.value)
     this.setState({music_time: new_music_time})
-    this.update(this.state.skills, new_music_time, this.state.is_resonance)
+    this.grandUpdate(this.state.grand_skills, new_music_time, this.state.is_resonance_grand)
   }
 
   render() {
@@ -1040,7 +1040,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
       type="number"
       id="music_time"
       name="music_time"
-      onChange={this.handleChangeMusicTime}
+      onChange={this.handleChangeGrandMusicTime}
       value={this.state.music_time}
     />
     秒
