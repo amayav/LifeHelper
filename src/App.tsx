@@ -216,7 +216,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     this.changeGrandCName = this.changeGrandCName.bind(this)
     this.changeGrandCInterval = this.changeGrandCInterval.bind(this)
     this.changeGrandCTime = this.changeGrandCTime.bind(this)
-    this.handleChangeGrandMusicTime = this.handleChangeGrandMusicTime.bind(this)
+    this.handleChangeMusicTime = this.handleChangeMusicTime.bind(this)
   }
 
   last_activated_skill_id: number = -1
@@ -811,10 +811,14 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     this.changeGrandTime(id, 2, time);
   }
 
-  private handleChangeGrandMusicTime = (e: React.ChangeEvent<HTMLInputElement>) : void => {
-    let new_music_time: number = Number(e.target.value)
-    this.setState({music_time: new_music_time})
-    this.grandUpdate(this.state.grand_skills, new_music_time, this.state.is_resonance_grand)
+  private handleChangeMusicTime = (e: React.ChangeEvent<HTMLInputElement>) : void => {
+    let new_music_time: number = Number(e.target.value);
+    this.setState({music_time: new_music_time});
+    if (this.state.is_grand === false) {
+      this.update(this.state.skills, new_music_time, this.state.is_resonance);
+    } else {
+      this.grandUpdate(this.state.grand_skills, new_music_time, this.state.is_resonance_grand);
+    }
   }
 
   render() {
@@ -1032,43 +1036,43 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           value="grand_live"
           key="g"
         />
-      </div>
-    { displayUnits.call(this) }
-    <div>
-    楽曲時間（残り3秒未満になると特技が発動しない）：
-    <input
-      type="number"
-      id="music_time"
-      name="music_time"
-      onChange={this.handleChangeGrandMusicTime}
-      value={this.state.music_time}
-    />
-    秒
-  </div>
-    <div>
-      <Table columns={time_ratio_columns} data={this.time_ratio}/>
-    </div>
-    <div className="table simple">
-      <label>簡易時系列
-        <Table columns={simple_columns} data={this.simple_timeline}/>
-      </label>
-    </div>
-    <div className="table detailed">
-      <label>詳細時系列
-        {
-          (() => {
-            if (this.state.is_grand) {
-              return <Table columns={grand_columns} data={this.grand_data}/>;
-            } else {
-              return <Table columns={columns} data={this.data}/>;
+        </div>
+        { displayUnits.call(this) }
+        <div>
+        楽曲時間（残り3秒未満になると特技が発動しない）：
+        <input
+          type="number"
+          id="music_time"
+          name="music_time"
+          onChange={this.handleChangeMusicTime}
+          value={this.state.music_time}
+        />
+        秒
+        </div>
+        <div>
+          <Table columns={time_ratio_columns} data={this.time_ratio}/>
+        </div>
+        <div className="table simple">
+          <label>簡易時系列
+            <Table columns={simple_columns} data={this.simple_timeline}/>
+          </label>
+        </div>
+        <div className="table detailed">
+          <label>詳細時系列
+            {
+              (() => {
+                if (this.state.is_grand) {
+                  return <Table columns={grand_columns} data={this.grand_data}/>;
+                } else {
+                  return <Table columns={columns} data={this.data}/>;
+                }
+              })()
             }
-          })()
-        }
-      </label>
-    </div>
-  </>
-)
-}
+          </label>
+        </div>
+      </>
+    )
+  }
 }
 
 function App() {
