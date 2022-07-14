@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/LifeHelper/static/css/main.7544add3.css",
-    "main.js": "/LifeHelper/static/js/main.1aac3b73.js",
+    "main.js": "/LifeHelper/static/js/main.6db2be17.js",
     "static/js/787.c7b46ab6.chunk.js": "/LifeHelper/static/js/787.c7b46ab6.chunk.js",
     "index.html": "/LifeHelper/index.html",
     "main.7544add3.css.map": "/LifeHelper/static/css/main.7544add3.css.map",
-    "main.1aac3b73.js.map": "/LifeHelper/static/js/main.1aac3b73.js.map",
+    "main.6db2be17.js.map": "/LifeHelper/static/js/main.6db2be17.js.map",
     "787.c7b46ab6.chunk.js.map": "/LifeHelper/static/js/787.c7b46ab6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.7544add3.css",
-    "static/js/main.1aac3b73.js"
+    "static/js/main.6db2be17.js"
   ]
 }
