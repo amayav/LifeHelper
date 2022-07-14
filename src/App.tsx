@@ -1091,7 +1091,7 @@ function App() {
         <div>
           <p>使ったらシンデレラガールズ総選挙で小早川紗枝に投票しますよね</p>
           <p>挙動がおかしいと思ったり要望があったりしたら<a href="https://github.com/amayav/LifeHelper">ソースコード</a>を自分でいじってね</p>
-          <p>ソースコードのライセンスは設けてないよ</p>
+          <p>ソースコードのライセンスは MIT License</p>
         </div>
         <Idols/>
       </div>
