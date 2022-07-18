@@ -1544,7 +1544,7 @@ test('do encore cinderella magic in GRAND LIVE', () => {
   let data: GrandData = t.testUpdateGrandTimeLine(8.0, grand_skills);
   let expectData: GrandData = {
     start: "8.0 - 8.5",
-    idolA1: "A1A2A3A4A5",
+    idolA1: "A1A3A4A5",
     idolA2: "",
     idolA3: "",
     idolA4: "",
@@ -1578,6 +1578,56 @@ test('do encore cinderella magic in GRAND LIVE', () => {
 
   data = t.testUpdateGrandTimeLine(70.0, grand_skills);
   expectData = {...expectData, start: "70.0 - 70.5", idolA1: "", idolA2: "C1C2C3C4C5", idolB1: "", idolC1: "C1C2C3C4C5"};
+  expect(data).toEqual(expectData)
+})
+
+test('encore in cinderella magic in GRAND LIVE', () => {
+  const t = new TestIdols({} as any)
+  const cinderella_magic_skill_a: Skill = {name: CINDERELLA_MAGIC, interval: 10, time: "time_a"}
+  const encore_skill: Skill = {name: ENCORE, interval: 100, time: "time_a"}
+  const skill_boost_skill: Skill = {name: SKILL_BOOST, interval: 100, time: "time_a"};
+  const other_skill_a: Skill = {name: OTHER, interval: 100, time: "time_a"}
+  const perfect_support_skill_b: Skill = {name: PERFECT_SUPPORT_3, interval: 15, time: "time_a"}
+  const guard_skill_c: Skill = {name: DAMAGE_GUARD, interval: 22, time: "time_a"}
+  let grand_skills: Skill[][] = [
+    [cinderella_magic_skill_a, encore_skill, skill_boost_skill, other_skill_a, other_skill_a, ],
+    [perfect_support_skill_b, perfect_support_skill_b, perfect_support_skill_b, perfect_support_skill_b, perfect_support_skill_b, ],
+    [guard_skill_c, guard_skill_c, guard_skill_c, guard_skill_c, guard_skill_c, ],
+  ]
+
+  let data: GrandData = t.testUpdateGrandTimeLine(10.0, grand_skills);
+  let expectData: GrandData = {
+    start: "10.0 - 10.5",
+    idolA1: "A1A3A4A5",
+    idolA2: "",
+    idolA3: "",
+    idolA4: "",
+    idolA5: "",
+    idolB1: "",
+    idolB2: "",
+    idolB3: "",
+    idolB4: "",
+    idolB5: "",
+    idolC1: "",
+    idolC2: "",
+    idolC3: "",
+    idolC4: "",
+    idolC5: "",
+    perfect: "-",
+    guard: "-"
+  };
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateGrandTimeLine(30.0, grand_skills);
+
+  data = t.testUpdateGrandTimeLine(40.0, grand_skills);
+  expectData = {...expectData, start: "40.0 - 40.5", idolA1: "A1B1A3A4A5", perfect: "p"};
+  expect(data).toEqual(expectData)
+
+  data = t.testUpdateGrandTimeLine(66.0, grand_skills);
+
+  data = t.testUpdateGrandTimeLine(70.0, grand_skills);
+  expectData = {...expectData, start: "70.0 - 70.5", idolA1: "A1C1A3A4A5", perfect: "-", guard: "g"};
   expect(data).toEqual(expectData)
 })
 

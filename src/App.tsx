@@ -322,7 +322,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     let being_activated_skills_name: string[] = []
 
     /* define skill which encore uses */
-    for (let i=4; i>=0; i--) {
+    for (let i=skills.length - 1; i>=0; i--) {
       if ((skills[i].name === ENCORE) &&
         (this.is_just_activated(current_time, skills[i], music_time)) &&
         (this.last_activated_skill_id !== -1)) {
@@ -331,7 +331,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
     }
 
     /* listing up activated skills and lastly activated skill*/
-    for (let i=4; i>=0; i--) {
+    for (let i=skills.length - 1; i>=0; i--) {
       if (!this.is_activated(current_time, skills[i], music_time)) {
         continue
       }
@@ -341,7 +341,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           continue
         }
         if ((skills[this.current_encore_id_list[i]].name) === CINDERELLA_MAGIC) {
-          for (let j=4; j>=0; j--) {
+          for (let j=skills.length - 1; j>=0; j--) {
             being_activated_skills_name.push(skills[j].name)
           }
         } else {
@@ -349,7 +349,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
         }
       } else {
         if (skills[i].name === CINDERELLA_MAGIC) {
-          for (let j=4; j>=0; j--) {
+          for (let j=skills.length - 1; j>=0; j--) {
             being_activated_skills_name.push(skills[j].name)
           }
         } else {
@@ -454,6 +454,14 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           (this.is_just_activated_grand(current_time, skills[i], music_time, j)) &&
           (this.last_activated_skill_id !== -1)) {
           this.current_grand_encore_id_list[j][i] = this.last_activated_skill_id;
+        } else if (skills[i].name === CINDERELLA_MAGIC) {
+          for (let k=skills.length - 1; k>=0; k--) {
+            if ((skills[k].name === ENCORE) &&
+              (this.is_just_activated_grand(current_time, skills[i], music_time, j)) &&
+              (this.last_activated_skill_id !== -1)) {
+              this.current_grand_encore_id_list[j][i] = this.last_activated_skill_id;
+            }
+          }
         }
       }
     }
@@ -475,7 +483,9 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           let encored_skill = grand_skills[encored_skill_unit][encored_skill_number];
           if (encored_skill.name === CINDERELLA_MAGIC) {
             for (let j=skills.length - 1; j>=0; j--) {
-              being_activated_skills_name[k].push(grand_skills[encored_skill_unit][j].name);
+              if (grand_skills[encored_skill_unit][j].name !== ENCORE) {
+                being_activated_skills_name[k].push(grand_skills[encored_skill_unit][j].name);
+              }
             }
           } else {
             being_activated_skills_name[k].push(encored_skill.name);
@@ -483,7 +493,26 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
         } else {
           if (skills[i].name === CINDERELLA_MAGIC) {
             for (let j=skills.length - 1; j>=0; j--) {
-              being_activated_skills_name[k].push(skills[j].name);
+              if (skills[j].name === ENCORE) {
+                // at least one skill other than encore should be activated
+                if (this.current_grand_encore_id_list[k][i] === -1) {
+                  continue;
+                }
+                let encored_skill_unit = Math.floor(this.current_grand_encore_id_list[k][i]/skills.length);
+                let encored_skill_number = this.current_grand_encore_id_list[k][i]%skills.length;
+                let encored_skill = grand_skills[encored_skill_unit][encored_skill_number];
+                if (encored_skill.name === CINDERELLA_MAGIC) {
+                  for (let l=skills.length - 1; l>=0; l--) {
+                    if (grand_skills[encored_skill_unit][l].name !== ENCORE) {
+                      being_activated_skills_name[k].push(grand_skills[encored_skill_unit][l].name);
+                    }
+                  }
+                } else {
+                  being_activated_skills_name[k].push(encored_skill.name);
+                }
+              } else {
+                being_activated_skills_name[k].push(skills[j].name);
+              }
             }
           } else {
             being_activated_skills_name[k].push(skills[i].name);
@@ -586,16 +615,39 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           continue;
         }
         if (skills[id].name === CINDERELLA_MAGIC) {
-          if (k === 0) {
-            display_strings[k][id] = "A1A2A3A4A5";
-          } else if (k === 1) {
-            display_strings[k][id] = "B1B2B3B4B5";
-          } else {
-            display_strings[k][id] = "C1C2C3C4C5";
+          display_strings[k][id] = "";
+          for (let i=0; i<skills.length; i++) {
+            if (skills[i].name === ENCORE) {
+              if (this.current_grand_encore_id_list[k][id] === -1) {
+                continue
+              }
+              let encored_skill_unit = Math.floor(this.current_grand_encore_id_list[k][id]/skills.length);
+              let encored_skill_number = this.current_grand_encore_id_list[k][id]%skills.length;
+              if (encored_skill_unit === 0) {
+                display_strings[k][id] += "A";
+              } else if (encored_skill_unit === 1) {
+                display_strings[k][id] += "B";
+              } else {
+                display_strings[k][id] += "C";
+              }
+              display_strings[k][id] += String(encored_skill_number + 1);
+            } else {
+              if (k === 0) {
+                display_strings[k][id] += "A";
+              } else if (k === 1) {
+                display_strings[k][id] += "B";
+              } else {
+                display_strings[k][id] += "C";
+              }
+              display_strings[k][id] += String(i + 1);
+            }
           }
           continue;
         }
         if (skills[id].name === ENCORE) {
+          if (this.current_grand_encore_id_list[k][id] === -1) {
+            continue
+          }
           let encored_skill_unit = Math.floor(this.current_grand_encore_id_list[k][id]/skills.length);
           let encored_skill_number = this.current_grand_encore_id_list[k][id]%skills.length;
           let encored_skill = grand_skills[encored_skill_unit][encored_skill_number];
