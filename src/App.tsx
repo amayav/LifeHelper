@@ -483,7 +483,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
           let encored_skill = grand_skills[encored_skill_unit][encored_skill_number];
           if (encored_skill.name === CINDERELLA_MAGIC) {
             for (let j=skills.length - 1; j>=0; j--) {
-              if (grand_skills[encored_skill_unit][j].name != ENCORE) {
+              if (grand_skills[encored_skill_unit][j].name !== ENCORE) {
                 being_activated_skills_name[k].push(grand_skills[encored_skill_unit][j].name);
               }
             }
@@ -493,7 +493,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
         } else {
           if (skills[i].name === CINDERELLA_MAGIC) {
             for (let j=skills.length - 1; j>=0; j--) {
-              if (skills[j].name == ENCORE) {
+              if (skills[j].name === ENCORE) {
                 // at least one skill other than encore should be activated
                 if (this.current_grand_encore_id_list[k][i] === -1) {
                   continue;
@@ -503,7 +503,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
                 let encored_skill = grand_skills[encored_skill_unit][encored_skill_number];
                 if (encored_skill.name === CINDERELLA_MAGIC) {
                   for (let l=skills.length - 1; l>=0; l--) {
-                    if (grand_skills[encored_skill_unit][l].name != ENCORE) {
+                    if (grand_skills[encored_skill_unit][l].name !== ENCORE) {
                       being_activated_skills_name[k].push(grand_skills[encored_skill_unit][l].name);
                     }
                   }
@@ -617,7 +617,7 @@ export class Idols extends React.Component <{}, {skills: Skill[], grand_skills: 
         if (skills[id].name === CINDERELLA_MAGIC) {
           display_strings[k][id] = "";
           for (let i=0; i<skills.length; i++) {
-            if (skills[i].name == ENCORE) {
+            if (skills[i].name === ENCORE) {
               if (this.current_grand_encore_id_list[k][id] === -1) {
                 continue
               }
